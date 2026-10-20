@@ -1,0 +1,18 @@
+---
+// Cloudflare Web Analytics: privacy-first, no cookies, no fingerprinting,
+// no cross-site tracking. Renders nothing unless PUBLIC_CF_BEACON_TOKEN is
+// set as a build variable, so analytics stay off in dev and on any deploy
+// that does not opt in. The token is a site identifier, not a secret.
+const token = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+---
+
+{
+  token && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={JSON.stringify({ token })}
+    />
+  )
+}

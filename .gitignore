@@ -1,0 +1,19 @@
+# build output
+dist/
+.astro/
+.wrangler/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# environment (the analytics token lives here locally; see .env.example)
+.env
+.env.production
+
+# editor
+.DS_Store
+.vscode/
+.idea/

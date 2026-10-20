@@ -1,0 +1,178 @@
+---
+import '../styles/global.css';
+import CloudflareAnalytics from '../components/CloudflareAnalytics.astro';
+import kit from '../data/kit.json';
+
+const SITE_DESCRIPTION =
+  'A planner, an implementer, a reviewer and an optional judge on the coding agents you already have, Claude Code and Codex, one role each, in a git worktree, with a receipt for every step.';
+
+interface PageMeta {
+  title?: string;
+  description?: string;
+  path?: string;
+  /** When true, applies `.doc` prose styles to <main> and loads prose.css. */
+  doc?: boolean;
+}
+
+interface Props extends PageMeta {
+  /** Astro injects Markdown frontmatter here when this is used as `layout:`. */
+  frontmatter?: PageMeta;
+}
+
+const merged: PageMeta = { ...Astro.props, ...Astro.props.frontmatter };
+const {
+  title = 'bottega-kit — a coding-agent loop on your own machine',
+  description = SITE_DESCRIPTION,
+  path = '/',
+  doc: isDoc = false
+} = merged;
+
+const siteOrigin = Astro.site ?? new URL('https://bottega-kit-sh.8004dev.workers.dev');
+const canonical = new URL(path === '/' || path.endsWith('/') ? path : path + '/', siteOrigin).toString();
+const ogImage = new URL('/og-image.png', siteOrigin).toString();
+const ogAlt =
+  'bottega-kit. One plan you approve. Rounds of build and review. A pull request at the end. Claude Code and Codex, one role each, in a git worktree, with a receipt for every step.';
+
+const nav = [
+  { href: '/#loop', label: 'How a task runs' },
+  { href: '/docs/', label: 'Get started' },
+  { href: '/docs/process/', label: 'The process' }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="matteoscurati" />
+    <meta name="theme-color" content="#f4f1ea" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,0..100&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    />
+    {isDoc && <link rel="stylesheet" href="/prose.css" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="bottega-kit" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'bottega-kit',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'macOS, Linux',
+        description: SITE_DESCRIPTION,
+        softwareVersion: kit.version,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        url: siteOrigin.href.replace(/\/$/, ''),
+        license: 'https://opensource.org/licenses/MIT'
+      })}
+    />
+
+    <CloudflareAnalytics />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-[var(--color-ink)] focus:text-[var(--color-paper)]"
+      >Skip to content</a
+    >
+    <header class="border-b border-[var(--color-line-strong)]">
+      <nav
+        class="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-1"
+      >
+        <a href="/" class="font-mono font-medium tracking-tight flex items-center gap-2 whitespace-nowrap">
+          <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          bottega-kit
+        </a>
+        <ul class="flex flex-wrap w-full sm:w-auto justify-start sm:justify-end gap-x-4 gap-y-1 text-sm">
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a
+              href="https://github.com/matteoscurati/bottega-kit"
+              class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+              rel="noopener"
+            >
+              GitHub ↗
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main" class:list={['max-w-6xl mx-auto px-6', isDoc ? 'doc py-12' : 'py-8']}>
+      <slot />
+    </main>
+
+    <footer class="border-t border-[var(--color-line-strong)] mt-24">
+      <div
+        class="max-w-6xl mx-auto px-6 py-8 text-sm text-[var(--color-ink-soft)] flex flex-col sm:flex-row justify-between gap-3"
+      >
+        <span>
+          Code: <a href="https://opensource.org/licenses/MIT" class="hover:text-[var(--color-ink)]">MIT</a>
+          · <a href="/privacy/" class="hover:text-[var(--color-ink)]">Privacy</a>
+          · <a href="https://github.com/matteoscurati/bottega-kit" class="hover:text-[var(--color-ink)]" rel="noopener"
+            >GitHub</a
+          >
+          · <a href="/changelog/" class="hover:text-[var(--color-ink)]">Changelog</a>
+        </span>
+        <span class="font-mono">v{kit.version} · {kit.releaseDate}</span>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  /* The brand mark: four squares, one per role, the last one the human gate. */
+  .mark {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    width: 12px;
+    height: 12px;
+  }
+  .mark i {
+    display: block;
+    background: var(--color-ink);
+  }
+  .mark i:nth-child(3) {
+    background: var(--color-ready);
+  }
+  .mark i:nth-child(4) {
+    background: var(--color-you);
+  }
+</style>

@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: build + check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Astro check (types + templates)
+        run: npm run check
+      # The sibling kit checkout is absent in CI, so sync-kit --check skips
+      # itself; the committed src/data and synced pages are what gets built.
+      - name: Build
+        run: npm run build
+      - name: Verify dist/ is non-empty
+        run: |
+          for f in index.html docs/index.html docs/process/index.html changelog/index.html 404.html; do
+            test -f "dist/$f" || { echo "::error::dist/$f missing"; exit 1; }
+          done
+      - name: Bundle size budget (runtime JS)
+        run: |
+          JS_BYTES=$(find dist -name "*.js" -exec gzip -c {} \; | wc -c)
+          echo "Total JS gzipped: $JS_BYTES bytes"
+          if [ "$JS_BYTES" -gt 51200 ]; then
+            echo "::error::Total gzipped JS exceeds the 50KB budget"; exit 1
+          fi

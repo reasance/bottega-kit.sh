@@ -1,0 +1,18 @@
+{
+  // Cloudflare Workers with Static Assets: the built site in dist/ is served
+  // by the platform, with no Worker script of our own. `npm run build` first.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bottega-kit-sh",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // Served at https://bottega-kit-sh.<account subdomain>.workers.dev until a
+  // custom domain exists. Then: set workers_dev to false, add
+  //   "routes": [{ "pattern": "<domain>", "custom_domain": true }],
+  // and change the origin in astro.config.mjs and public/robots.txt.
+  "workers_dev": true,
+  "observability": { "enabled": false }
+}

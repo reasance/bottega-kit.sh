@@ -1,0 +1,381 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodeBlock from '../components/CodeBlock.astro';
+import DispatchLog from '../components/DispatchLog.astro';
+import LoopDiagram from '../components/LoopDiagram.astro';
+import kit from '../data/kit.json';
+
+// The starter configuration, as `bottega init` writes it when it finds both
+// CLIs, in the README's one-profile-per-line shape.
+const spaced = (value: unknown) => JSON.stringify(value).replace(/,"/g, ', "').replace(/":/g, '": ');
+const config = `{
+  "schema_version": ${kit.starter.schema_version},
+  "profiles": {
+${Object.entries(kit.starter.profiles)
+  .map(([name, profile]) => `    ${JSON.stringify(name).padEnd(16)} ${spaced(profile)}`)
+  .join(',\n')}
+  },
+  "roles": ${spaced(kit.starter.roles)},
+  "rounds": ${kit.starter.rounds}
+}`;
+
+// One argv per harness, as HARNESS_MATRIX has it, with shell quoting for the
+// arguments that need it.
+const quote = (arg: string) => (/^[A-Za-z0-9_@%+=:,./<>-]+$/.test(arg) ? arg : `'${arg}'`);
+const argv = (harness: 'claude' | 'codex', role: 'implementer' | 'reviewer') =>
+  kit.matrix[harness][role].map(quote).join(' ');
+
+const log = [
+  { seq: '001', role: 'planner', profile: 'fable', model: 'claude-fable-5-1', result: 'planned', time: '2m41s' },
+  { seq: '002', role: 'implementer', profile: 'opus-builder', model: 'claude-opus-5-5', result: 'done', time: '6m02s' },
+  { seq: '003', role: 'reviewer', profile: 'opus-reviewer', model: 'claude-opus-5-5', result: 'needs-work', time: '2m14s' },
+  { seq: '004', role: 'implementer', profile: 'opus-builder', model: 'claude-opus-5-5', result: 'done', time: '3m40s' },
+  { seq: '005', role: 'reviewer', profile: 'opus-reviewer', model: 'claude-opus-5-5', result: 'ready', time: '1m55s' },
+  { seq: '006', role: 'judge', profile: 'fable', model: 'claude-fable-5-1', result: 'ready', time: '48s' }
+];
+
+const roles = [
+  {
+    role: 'planner',
+    does: 'reads the repository and your request; writes the plan, or asks you questions',
+    changes: 'nothing',
+    product: 'its final message becomes the plan in task.md',
+    signal: null
+  },
+  {
+    role: 'implementer',
+    does: 'works through the unchecked to-do items, adds tests, ticks items',
+    changes: 'the worktree and the boxes in task.md; never commits or pushes',
+    product: 'a summary, kept in the receipt',
+    signal: null
+  },
+  {
+    role: 'reviewer',
+    does: 'checks every ticked item, runs the tests and the manual QA scenarios',
+    changes: 'nothing it keeps: a changed tracked file stops the task',
+    product: 'Review Findings in task.md',
+    signal: ['ready', 'needs-work', 'blocked']
+  },
+  {
+    role: 'judge',
+    does: 'optional; reads the plan and the diff, says whether to merge',
+    changes: 'nothing',
+    product: 'Verdict in task.md',
+    signal: ['ready', 'needs-work']
+  }
+];
+
+const never = [
+  'Retry a failed dispatch, fall back to another model, or substitute a profile.',
+  'Bring a model of its own. Every dispatch runs a profile you bound, and the harness must report the model you asked for.',
+  'Put a secret in its configuration, its prompts, a task or a receipt. Profiles name environment variables; receipts record names, never values.',
+  'Merge, or push anywhere but origin.',
+  'Let the planner, the reviewer or the judge change your code: their runs are checked against the worktree before and after.'
+];
+
+const receipt = [
+  ['prompt.md', 'the prompt, exactly as sent'],
+  ['output.md', 'the final message'],
+  ['events.jsonl', "the harness's raw output"],
+  ['run.json', 'requested and reported model, effort, argv, timings, usage, cost, rails, signal'],
+  ['error.json', 'only on failure: the phase, the reason, the last stderr lines'],
+  ['signal.json', 'what the agent signalled, and when']
+];
+
+const statusClass: Record<string, string> = {
+  ready: 'status status-ready',
+  'needs-work': 'status status-work',
+  blocked: 'status status-blocked'
+};
+
+const link = 'underline underline-offset-4 text-[var(--color-ink)]';
+const stepNum = 'font-mono text-[var(--color-ink-soft)] text-sm';
+const stepTitle = 'text-xl mt-2 mb-2 leading-tight';
+const useRow =
+  'border-t border-[var(--color-line)] pt-5 grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-10';
+const code = 'font-mono text-[0.9em]';
+---
+
+<BaseLayout path="/">
+  <!-- Hero -->
+  <section class="pt-10 pb-14 md:pt-16 md:pb-16">
+    <p class="eyebrow mb-6">A coding-agent loop on your own machine</p>
+    <h1 class="text-[2.6rem] md:text-[3.4rem] xl:text-[3.9rem] [text-wrap:balance]">
+      <span class="lg:block">One plan you approve.</span>
+      <span class="lg:block">Rounds of build and review.</span>
+      <span class="lg:block">A pull request at the end.</span>
+    </h1>
+    <p class="mt-8 max-w-2xl text-lg md:text-xl text-[var(--color-ink-soft)]">
+      bottega-kit runs a planner, an implementer, a reviewer and an optional judge on the coding agents
+      you already have, Claude Code and Codex today, one role each, in a git worktree. It decides what
+      comes next from what each agent signals and from the files on disk, never from its prose, and
+      keeps a receipt for every step.
+    </p>
+    <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <a href="/docs/" class="btn px-4 py-2">Get started →</a>
+      <a href="#loop" class={link}>How a task runs ↓</a>
+    </p>
+    <div class="mt-12 max-w-3xl">
+      <DispatchLog
+        lines={log}
+        label="What `bottega run` prints: one line per dispatch, with the model the harness reported. The models are the ones you bound; the kit brings none of its own."
+      />
+    </div>
+  </section>
+
+  <!-- How you use it -->
+  <section id="use" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-3">How you use it</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
+      Three steps. Each role runs under a profile from your configuration: a harness, the CLI that runs
+      the role, a model and an effort.
+    </p>
+    <ol role="list" class="grid gap-10">
+      <li class={useRow}>
+        <div>
+          <span class={stepNum} aria-hidden="true">1</span>
+          <h3 class={stepTitle}>Install it</h3>
+          <p class="text-[var(--color-ink-soft)]">
+            You need git, gh, python3 3.9 or newer and at least one of <code class={code}>claude</code>
+            (Claude Code) and <code class={code}>codex</code> (Codex CLI), logged in. The harnesses
+            authenticate on their own; bottega-kit never handles their credentials.
+            <code class={code}>init</code> writes a starter configuration for the harnesses it finds on
+            PATH; <code class={code}>doctor</code> checks it, and that each bound harness answers.
+          </p>
+        </div>
+        <CodeBlock
+          label="Terminal"
+          code={`npx bottega-kit
+bottega init
+bottega doctor`}
+        />
+      </li>
+      <li class={useRow}>
+        <div>
+          <span class={stepNum} aria-hidden="true">2</span>
+          <h3 class={stepTitle}>Bind the roles to profiles</h3>
+          <p class="text-[var(--color-ink-soft)]">
+            A profile is a harness, a model and an effort; one profile may serve several roles. This is
+            the starter <code class={code}>init</code> writes when it finds both CLIs: Fable plans and
+            judges, Opus builds and reviews, and a Codex profile is there to bind. A profile may also
+            point Claude Code at another Anthropic-compatible endpoint; it then runs without your
+            Anthropic credentials. <a href="/docs/configuration/" class={link}>Every setting</a>.
+          </p>
+        </div>
+        <CodeBlock lang="json" label="~/.config/bottega-kit/config.json" code={config} />
+      </li>
+      <li class={useRow}>
+        <div>
+          <span class={stepNum} aria-hidden="true">3</span>
+          <h3 class={stepTitle}>Run a task</h3>
+          <p class="text-[var(--color-ink-soft)]">
+            From a repository with an <code class={code}>origin</code> on GitHub. <code class={code}
+              >plan</code
+            > may come back with questions: answer them in <code class={code}>task.md</code> and run it
+            again. <code class={code}>approve</code> is the only human gate: it freezes the plan, the
+            roles and the round cap. <code class={code}>run</code> alternates implementer and reviewer
+            up to the cap, then asks the judge. <code class={code}>pr</code> commits what is left, pushes
+            and opens the pull request.
+          </p>
+        </div>
+        <CodeBlock
+          label="Terminal"
+          code={`cd your-repo
+bottega new --title "Add a dry-run flag" --request "Add --dry-run to the export command."
+bottega plan dry-run-flag      # read task.md; answer its questions and plan again
+bottega approve dry-run-flag   # the only human gate
+bottega run dry-run-flag       # exit 0 done, ${kit.exitCodes.stopped} stopped
+bottega pr dry-run-flag        # prints the pull request's URL`}
+        />
+      </li>
+    </ol>
+    <p class="mt-10">
+      <a href="/docs/" class="btn px-4 py-2">Get started, step by step →</a>
+    </p>
+  </section>
+
+  <!-- How a task runs -->
+  <section id="loop" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-3">How a task runs</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
+      A round is one implementer pass and one reviewer pass. After every dispatch, bottega-kit applies
+      the first rule that matches.
+    </p>
+    <div class="mb-10 hidden sm:block">
+      <LoopDiagram />
+    </div>
+    <ol class="grid gap-x-10 gap-y-6 md:grid-cols-2 lg:grid-cols-3 text-[var(--color-ink-soft)]">
+      <li class="border-t border-[var(--color-line)] pt-3">
+        <span class="status status-blocked">dispatch-failed</span>
+        <p class="mt-1">
+          The harness could not start, exited non-zero, reported an error, or left no final message:
+          stop. A profile <code class={code}>timeout</code> stops as <code class={code}>timeout</code>.
+        </p>
+      </li>
+      <li class="border-t border-[var(--color-line)] pt-3">
+        <span class="status status-blocked">identity-mismatch</span>
+        <p class="mt-1">
+          The harness reported a model other than the one requested, and not one of the profile's
+          aliases: stop.
+        </p>
+      </li>
+      <li class="border-t border-[var(--color-line)] pt-3">
+        <span class="status status-blocked">role-modified-worktree</span>
+        <p class="mt-1">A planner, reviewer or judge changed a tracked file or HEAD: stop.</p>
+      </li>
+      <li class="border-t border-[var(--color-line)] pt-3">
+        <span class="status status-ready">implementer done</span>
+        <p class="mt-1">The reviewer is next. A commit is a warning in the receipt, not a stop.</p>
+      </li>
+      <li class="border-t border-[var(--color-line)] pt-3">
+        <span class="status status-work">reviewer signals</span>
+        <p class="mt-1">
+          Its findings replace <code class={code}>## Review Findings</code>. <em>ready</em>: the judge,
+          or done. <em>blocked</em>: stop, with its reason. <em>needs-work</em>, or no signal: the next
+          round, or <em>cap-reached</em> after the last one. No fix pass runs that no reviewer would
+          check.
+        </p>
+      </li>
+      <li class="border-t border-[var(--color-line)] pt-3">
+        <span class="status status-ready">judge signals</span>
+        <p class="mt-1">
+          Its verdict replaces <code class={code}>## Verdict</code>. <em>ready</em>: done. Anything else:
+          stop, <em>judge-needs-work</em>.
+        </p>
+      </li>
+    </ol>
+    <p class="mt-10 max-w-2xl text-[var(--color-ink-soft)]">
+      A stopped task continues with <code class={code}>bottega resume</code>, with a fresh cap. Nothing
+      is retried for you; <code class={code}>resume</code> is how you retry. <a
+        href="/docs/process/"
+        class={link}>The process, step by step →</a
+      >
+    </p>
+  </section>
+
+  <!-- The roles -->
+  <section id="roles" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-10">The roles</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-[0.9rem] leading-snug border-collapse">
+        <thead>
+          <tr class="eyebrow text-left border-b border-[var(--color-line-strong)]">
+            <th class="py-2 pr-4 font-normal">role</th>
+            <th class="py-2 pr-4 font-normal">what it does</th>
+            <th class="py-2 pr-4 font-normal">what it may change</th>
+            <th class="py-2 pr-4 font-normal">its product</th>
+            <th class="py-2 font-normal">signals</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            roles.map((r) => (
+              <tr class="border-b border-[var(--color-line)] align-top">
+                <td class="py-3 pr-4 font-mono font-medium whitespace-nowrap">{r.role}</td>
+                <td class="py-3 pr-4 text-[var(--color-ink-soft)]">{r.does}</td>
+                <td class="py-3 pr-4 text-[var(--color-ink-soft)]">{r.changes}</td>
+                <td class="py-3 pr-4 text-[var(--color-ink-soft)]">{r.product}</td>
+                <td class="py-3 whitespace-nowrap">
+                  {r.signal ? (
+                    r.signal.map((s, i) => (
+                      <>
+                        {i > 0 && ' '}
+                        <span class={statusClass[s]}>{s}</span>
+                      </>
+                    ))
+                  ) : (
+                    <span class="text-[var(--color-ink-soft)]">—</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-8 max-w-2xl text-[var(--color-ink-soft)]">
+      Agents report back by running <code class={code}>bottega signal</code>, one command their prompt
+      gives them with absolute paths. The task document, <code class={code}>task.md</code>, is the only
+      thing they share: the request verbatim, the plan with its to-do items, the findings, the verdict. <a
+        href="/docs/prompts/"
+        class={link}>The prompts and the template, verbatim →</a
+      >
+    </p>
+  </section>
+
+  <!-- Harnesses -->
+  <section id="harnesses" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-3">Two harnesses, the narrowest permissions each offers</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
+      Every flag lives in one table in the kit, pinned by a test and checked against a live run before
+      each release. Here is what the implementer is run with on each.
+    </p>
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div class="min-w-0">
+        <h3 class="text-xl mb-2">claude</h3>
+        <p class="text-[var(--color-ink-soft)] mb-4">
+          Claude Code, headless. Effort: <span class="font-mono text-[0.85em]"
+            >{kit.efforts.claude.join(' · ')}</span
+          >. The planner gets read tools only; the implementer may edit and run commands, with
+          <code class={code}>git push</code> and <code class={code}>gh</code> denied; the reviewer may
+          not commit either. A profile that sets <code class={code}>ANTHROPIC_BASE_URL</code> runs with
+          a fresh configuration directory and with {kit.proxyStripped.length} Anthropic variables
+          removed from the environment first.
+        </p>
+        <CodeBlock label="implementer" wrap code={argv('claude', 'implementer')} />
+      </div>
+      <div class="min-w-0">
+        <h3 class="text-xl mb-2">codex</h3>
+        <p class="text-[var(--color-ink-soft)] mb-4">
+          Codex CLI, <code class={code}>exec</code>. Effort: <span class="font-mono text-[0.85em]"
+            >{kit.efforts.codex.join(' · ')}</span
+          >. The planner runs in the read-only sandbox, the other roles in workspace-write with the
+          task directory added; the sandbox blocks the network. Codex reports no model, so its identity
+          stays <em>requested-only</em> in the receipt.
+        </p>
+        <CodeBlock label="implementer" wrap code={argv('codex', 'implementer')} />
+      </div>
+    </div>
+    <p class="mt-10 max-w-2xl text-[var(--color-ink-soft)]">
+      Before each release the loop runs live on throwaway repositories, each harness in every role, and
+      the dates, versions, durations and costs replace the previous ones. <a
+        href="/docs/compatibility/"
+        class={link}>What was verified for {kit.version} →</a
+      >
+    </p>
+  </section>
+
+  <!-- What it never does · the receipt -->
+  <section class="rule py-14">
+    <div class="grid gap-12 md:grid-cols-2">
+      <div>
+        <h2 class="text-2xl mb-5">What it never does</h2>
+        <ul class="border-b border-[var(--color-line)]">
+          {never.map((t) => <li class="border-t border-[var(--color-line)] py-2.5">{t}</li>)}
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-2xl mb-5">What every dispatch leaves behind</h2>
+        <ul class="border-b border-[var(--color-line)]">
+          {
+            receipt.map(([file, what]) => (
+              <li class="border-t border-[var(--color-line)] py-2.5 grid grid-cols-[8rem_1fr] gap-3">
+                <span class="font-mono text-[0.85em]">{file}</span>
+                <span class="text-[var(--color-ink-soft)]">{what}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-5 text-[var(--color-ink-soft)]">
+          In a directory outside the repository, so it outlives the worktree. Free (MIT); you pay your
+          providers, and the receipt records what Claude Code reported as the cost.
+        </p>
+      </div>
+    </div>
+    <p class="mt-12 flex flex-wrap gap-x-6 gap-y-2">
+      <a href="/docs/" class={link}>Get started →</a>
+      <a href="/docs/process/" class={link}>The process →</a>
+      <a href="/changelog/" class={link}>Changelog →</a>
+    </p>
+  </section>
+</BaseLayout>

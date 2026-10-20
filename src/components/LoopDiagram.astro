@@ -1,0 +1,107 @@
+---
+// The loop, as a drawing: the commands you run, the roles they dispatch, the
+// signals that decide what comes next. The rules next to it are the
+// accessible text; the drawing is described by its title and desc.
+import kit from '../data/kit.json';
+---
+
+<svg
+  class="dg"
+  viewBox="0 0 960 250"
+  role="img"
+  aria-labelledby="loop-title loop-desc"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title id="loop-title">How a task runs</title>
+  <desc id="loop-desc">
+    new, then plan, which may ask questions; approve, the human gate; then rounds of implementer and
+    reviewer: ready goes on to the judge or finishes, needs-work opens the next round up to the cap,
+    blocked stops; the judge says ready or stops; pr opens the pull request.
+  </desc>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+    </marker>
+  </defs>
+
+  <!-- the commands, above -->
+  <g class="sm soft">
+    <text x="55" y="38" class="mid">bottega new</text>
+    <text x="158" y="38" class="mid">bottega plan</text>
+    <text x="295" y="38" class="mid">bottega approve</text>
+    <text x="550" y="38" class="mid">bottega run</text>
+    <text x="900" y="38" class="mid">bottega pr</text>
+  </g>
+  <line x1="405" y1="44" x2="805" y2="44" class="path" style="stroke: var(--color-line)"></line>
+
+  <!-- boxes -->
+  <rect x="20" y="60" width="70" height="44" class="box"></rect>
+  <text x="55" y="87" class="mid ttl">new</text>
+
+  <rect x="118" y="60" width="80" height="44" class="box"></rect>
+  <text x="158" y="87" class="mid ttl">planner</text>
+
+  <rect x="250" y="60" width="90" height="44" class="you"></rect>
+  <text x="295" y="87" class="mid ttl you-t">you</text>
+
+  <rect x="400" y="60" width="130" height="44" class="box"></rect>
+  <text x="465" y="87" class="mid ttl">implementer</text>
+
+  <rect x="575" y="60" width="110" height="44" class="box"></rect>
+  <text x="630" y="87" class="mid ttl">reviewer</text>
+
+  <rect x="730" y="60" width="80" height="44" class="box"></rect>
+  <text x="770" y="87" class="mid ttl">judge</text>
+
+  <rect x="855" y="60" width="90" height="44" class="you"></rect>
+  <text x="900" y="87" class="mid ttl you-t">pr</text>
+
+  <!-- the straight path -->
+  <g style="color: var(--color-ink)">
+    <line x1="90" y1="82" x2="116" y2="82" class="path" marker-end="url(#ah)"></line>
+    <line x1="198" y1="82" x2="248" y2="82" class="path" marker-end="url(#ah)"></line>
+    <line x1="340" y1="82" x2="398" y2="82" class="path" marker-end="url(#ah)"></line>
+    <line x1="530" y1="82" x2="573" y2="82" class="path" marker-end="url(#ah)"></line>
+  </g>
+  <g style="color: var(--color-ready)">
+    <line x1="685" y1="82" x2="728" y2="82" class="go" marker-end="url(#ah)"></line>
+    <line x1="810" y1="82" x2="853" y2="82" class="go" marker-end="url(#ah)"></line>
+  </g>
+  <text x="707" y="72" class="mid sm ok">ready</text>
+  <text x="831" y="72" class="mid sm ok">ready</text>
+
+  <!-- questions: plan again -->
+  <g style="color: var(--color-ink-soft)">
+    <path d="M143 60 C143 30, 173 30, 173 60" class="path" style="stroke: var(--color-line)" marker-end="url(#ah)"></path>
+  </g>
+  <text x="158" y="122" class="mid sm soft">questions? answer,</text>
+  <text x="158" y="136" class="mid sm soft">then plan again</text>
+
+  <!-- the human gate -->
+  <text x="295" y="122" class="mid sm you-t">frozen: plan hash,</text>
+  <text x="295" y="136" class="mid sm you-t">roles, round cap</text>
+
+  <!-- needs-work: the next round -->
+  <g style="color: var(--color-work)">
+    <path d="M630 104 L630 150 L518 150 L518 106" class="loop" marker-end="url(#ah)"></path>
+  </g>
+  <text x="400" y="166" class="mid sm warn">needs-work · the next round, up to the cap ({kit.defaultRounds} by default)</text>
+
+  <!-- blocked / cap reached / judge needs-work: stops -->
+  <g style="color: var(--color-blocked)">
+    <path d="M655 104 L655 196" class="stop" marker-end="url(#ah)"></path>
+    <path d="M785 104 L785 196" class="stop" marker-end="url(#ah)"></path>
+  </g>
+  <text x="655" y="214" class="mid sm err">blocked · cap-reached</text>
+  <text x="785" y="214" class="mid sm err">needs-work</text>
+  <text x="720" y="232" class="mid sm soft">stopped, exit {kit.exitCodes.stopped} · bottega resume</text>
+
+  <!-- what each writes -->
+  <text x="55" y="122" class="mid sm soft">task.md,</text>
+  <text x="55" y="136" class="mid sm soft">worktree,</text>
+  <text x="55" y="150" class="mid sm soft">branch</text>
+  <text x="450" y="122" class="mid sm soft">edits the worktree</text>
+  <text x="450" y="136" class="mid sm soft">and ticks items</text>
+  <text x="900" y="122" class="mid sm soft">commit, push,</text>
+  <text x="900" y="136" class="mid sm soft">gh pr create</text>
+</svg>

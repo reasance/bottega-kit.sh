@@ -1,0 +1,229 @@
+@import 'tailwindcss';
+
+/* Design tokens.
+ *
+ * A workshop bench: warm paper, ink, hairline rules, and three status
+ * colours with the meanings the signals have, never decorative:
+ *   green = ready / done
+ *   amber = needs-work, and a stop you resume
+ *   red   = blocked, refused, stopped
+ * Blue marks the human gate: you approve the plan, you open the pull request.
+ */
+@theme {
+  --color-paper: #f4f1ea;
+  --color-panel: #faf8f3;
+  --color-ink: #1c1a17;
+  --color-ink-soft: #5b5650;
+  --color-line: #d4cec2;
+  --color-line-strong: #1c1a17;
+
+  --color-ready: #1f7a4f;
+  --color-ready-soft: #dcefe3;
+  --color-ready-text: #176040;
+  --color-work: #b8740e;
+  --color-work-soft: #f8e9c8;
+  --color-work-text: #8a5600;
+  --color-blocked: #b23a2a;
+  --color-blocked-soft: #f5dcd6;
+  --color-you: #2b5d9b;
+  --color-you-soft: #dbe6f4;
+  --color-ready-on-ink: #5ec892;
+  --color-work-on-ink: #e9a93a;
+  --color-blocked-on-ink: #ef7f6c;
+
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+  font-variation-settings:
+    'opsz' 72,
+    'SOFT' 30;
+}
+
+code,
+pre,
+kbd,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* In the base layer, so Tailwind's colour utilities on a link still apply. */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Full-bleed rule: sections are separated by one solid line, never by cards. */
+.rule {
+  border-top: 1px solid var(--color-line-strong);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* An ink button: paper text on ink. */
+.btn {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Status words: a coloured dot and the signal, stated plainly. */
+.status {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.status::before {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  margin-right: 0.45em;
+  vertical-align: 0.05em;
+  background: currentColor;
+}
+.status-ready {
+  color: var(--color-ready-text);
+}
+.status-work {
+  color: var(--color-work-text);
+}
+.status-blocked {
+  color: var(--color-blocked);
+}
+.status-you {
+  color: var(--color-you);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Diagrams: inline SVG drawn in the same tokens and type. */
+.dg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.dg text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-ink);
+}
+.dg .sm {
+  font-size: 11px;
+}
+.dg .ttl {
+  font-size: 13px;
+  font-weight: 500;
+}
+.dg .soft {
+  fill: var(--color-ink-soft);
+}
+.dg .ok {
+  fill: var(--color-ready-text);
+  font-weight: 500;
+}
+.dg .warn {
+  fill: var(--color-work-text);
+  font-weight: 500;
+}
+.dg .err {
+  fill: var(--color-blocked);
+  font-weight: 500;
+}
+.dg .you-t {
+  fill: var(--color-you);
+  font-weight: 500;
+}
+.dg .mid {
+  text-anchor: middle;
+}
+.dg .end {
+  text-anchor: end;
+}
+.dg .box {
+  fill: var(--color-panel);
+  stroke: var(--color-ink);
+  stroke-width: 1;
+}
+.dg .you {
+  fill: var(--color-you-soft);
+  stroke: var(--color-you);
+  stroke-width: 1.25;
+}
+.dg .path {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.25;
+}
+.dg .loop {
+  fill: none;
+  stroke: var(--color-work);
+  stroke-width: 1.5;
+}
+.dg .stop {
+  fill: none;
+  stroke: var(--color-blocked);
+  stroke-width: 1.25;
+  stroke-dasharray: 5 4;
+}
+.dg .go {
+  fill: none;
+  stroke: var(--color-ready);
+  stroke-width: 1.5;
+}

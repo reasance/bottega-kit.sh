@@ -1,0 +1,33 @@
+{
+  "name": "bottega-kit.sh",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Showcase and docs site for bottega-kit — a planner, an implementer, a reviewer and an optional judge on the coding agents you already have, in a git worktree, with a receipt for every step.",
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/sync-kit.mjs --check && node scripts/generate-og-image.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "sync-kit": "node scripts/sync-kit.mjs",
+    "og-image:generate": "node scripts/generate-og-image.mjs",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prettier": "^3.3.0",
+    "prettier-plugin-astro": "^0.14.0",
+    "wrangler": "^4.151.0"
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bottega-kit-sh.8004dev.workers.dev/sitemap-index.xml

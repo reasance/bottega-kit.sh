@@ -203,7 +203,10 @@ async function syncBlock(sitePath, body) {
   const b = page.indexOf(BEGIN);
   const e = page.indexOf(END, b + BEGIN.length);
   if (b === -1 || e === -1) fail(`markers missing from ${sitePath}`);
-  await emit(sitePath, `${page.slice(0, b + BEGIN.length)}\n\n${body.trimEnd()}\n\n${page.slice(e)}`);
+  await emit(
+    sitePath,
+    `${page.slice(0, b + BEGIN.length)}\n\n${body.trimEnd()}\n\n${page.slice(e)}`
+  );
 }
 
 async function syncDoc(sourcePath, sitePath) {
@@ -227,11 +230,31 @@ async function verbatim(sourcePath) {
   return `${f}markdown\n${text}\n${f}`;
 }
 const prompts = [
-  ['The task template', 'templates/task.md', 'What `bottega new` fills in with your title and your request, verbatim. The spaced `{{ … }}` markers are guidance for the planner; it follows the template section for section.'],
-  ['The planner prompt', 'prompts/planner.md', 'Reads the repository without changing it; ends with the plan, or with questions for you.'],
-  ['The implementer prompt', 'prompts/implementer.md', 'Works through the unchecked items in plan order, adds tests, ticks items; never commits.'],
-  ['The reviewer prompt', 'prompts/reviewer.md', 'Verifies every ticked item, runs the tests and the manual QA, writes the findings and signals.'],
-  ['The judge prompt', 'prompts/judge.md', 'Reads the plan and the diff and says whether it would merge; signals.']
+  [
+    'The task template',
+    'templates/task.md',
+    'What `bottega new` fills in with your title and your request, verbatim. The spaced `{{ … }}` markers are guidance for the planner; it follows the template section for section.'
+  ],
+  [
+    'The planner prompt',
+    'prompts/planner.md',
+    'Reads the repository without changing it; ends with the plan, or with questions for you.'
+  ],
+  [
+    'The implementer prompt',
+    'prompts/implementer.md',
+    'Works through the unchecked items in plan order, adds tests, ticks items; never commits.'
+  ],
+  [
+    'The reviewer prompt',
+    'prompts/reviewer.md',
+    'Verifies every ticked item, runs the tests and the manual QA, writes the findings and signals.'
+  ],
+  [
+    'The judge prompt',
+    'prompts/judge.md',
+    'Reads the plan and the diff and says whether it would merge; signals.'
+  ]
 ];
 let promptsBody = '';
 for (const [heading, path, blurb] of prompts) {
@@ -253,5 +276,7 @@ if (isCheck) {
     console.error('  Run `npm run sync-kit` to update.');
     process.exit(1);
   }
-  console.log(`sync-kit: in sync with bottega-kit ${pkg.version} (${relative(siteRoot, kitRoot)}).`);
+  console.log(
+    `sync-kit: in sync with bottega-kit ${pkg.version} (${relative(siteRoot, kitRoot)}).`
+  );
 }

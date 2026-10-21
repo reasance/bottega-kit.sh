@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "title": "bottega-kit: you approve the plan, the agents do the rounds",
+    "description": "Planner, implementer, reviewer and optional judge on Claude Code and Codex. A receipt per dispatch."
+  },
+  "hero": {
+    "eyebrow": "Local coding-agent loop · Claude Code + Codex",
+    "h1": [
+      "You approve the plan.",
+      "The agents do *the rounds.*"
+    ],
+    "lead": "A planner writes the plan. You approve it once. Implementer and reviewer take the rounds, up to a cap; a judge says whether to merge. Then a pull request. Every dispatch leaves a receipt.",
+    "cta": "Get started →",
+    "cta2": "Watch a task run ↓",
+    "transcript": "full",
+    "transcriptCaption": "One line per dispatch: the profile, and the model the harness reported."
+  },
+  "commands": {
+    "h2": "Six commands. Nothing runs in the background.",
+    "lead": "A round is one implementer pass and one reviewer pass. The cap is {rounds} unless you change it.",
+    "items": [
+      {
+        "cmd": "new",
+        "what": "Worktree, branch, and a `task.md` holding your request verbatim."
+      },
+      {
+        "cmd": "plan",
+        "what": "One planner dispatch. Answer its questions in `task.md` and plan again."
+      },
+      {
+        "cmd": "approve",
+        "what": "The gate. Plan hash, roles and cap recorded."
+      },
+      {
+        "cmd": "run",
+        "what": "Rounds up to the cap, then the judge. Exit {exitOk} done, {exitStopped} stopped."
+      },
+      {
+        "cmd": "pr",
+        "what": "Commit if needed, push to origin, open the pull request."
+      },
+      {
+        "cmd": "resume",
+        "what": "After a stop, with a fresh cap. The only retry."
+      }
+    ]
+  },
+  "claims": {
+    "h2": "Made to be *left alone* with a branch.",
+    "lead": "After approval, nobody asks you anything.",
+    "items": [
+      {
+        "title": "One gate: the plan.",
+        "text": "Approval records the plan hash. Edit the plan afterwards and `run` refuses, exit {exitRefused}."
+      },
+      {
+        "title": "Reviewers review. They do not fix.",
+        "text": "The worktree is hashed before and after every planner, reviewer and judge run. A changed tracked file stops the task."
+      },
+      {
+        "title": "No retries. No fallbacks. No model of its own.",
+        "text": "A failed dispatch stops the task; you resume it. A different reported model stops it too."
+      },
+      {
+        "title": "Mix vendors, per role.",
+        "text": "Fable plans, Codex builds, GLM reviews on Z.AI's endpoint, without your Anthropic credentials."
+      }
+    ]
+  },
+  "loop": {
+    "h2": "After every dispatch, the first rule that matches.",
+    "lead": "Nothing is retried or substituted.",
+    "rules": [
+      {
+        "word": "dispatch-failed",
+        "text": "The harness failed to start, exited non-zero, reported an error or left no final message: stop."
+      },
+      {
+        "word": "identity-mismatch",
+        "text": "The reported model is neither the one requested nor an alias: stop."
+      },
+      {
+        "word": "role-modified-worktree",
+        "text": "A planner, reviewer or judge changed a tracked file or HEAD: stop."
+      },
+      {
+        "word": "implementer done",
+        "text": "The reviewer is next. A commit is a warning, not a stop."
+      },
+      {
+        "word": "reviewer signals",
+        "text": "ready: the judge, or done. blocked: stop. needs-work or no signal: the next round, or cap-reached."
+      },
+      {
+        "word": "judge signals",
+        "text": "ready: done. Anything else: stop, judge-needs-work."
+      }
+    ],
+    "after": "Ctrl-C stops a task as interrupted; `bottega resume` continues it.",
+    "afterLink": "The process, step by step →"
+  },
+  "roles": {
+    "h2": "Four roles. One document between them.",
+    "lead": "Agents share only `task.md` and report with `bottega signal`. The kit decides from that, never from prose.",
+    "items": [
+      {
+        "role": "planner",
+        "does": "Reads the repository. Writes the plan or asks questions.",
+        "changes": "nothing",
+        "product": "the plan in `task.md`"
+      },
+      {
+        "role": "implementer",
+        "does": "Works the to-do items, adds tests, ticks boxes.",
+        "changes": "the worktree and `task.md` boxes; never commits or pushes",
+        "product": "a summary, in the receipt"
+      },
+      {
+        "role": "reviewer",
+        "does": "Checks every ticked item, runs the tests and the manual QA.",
+        "changes": "nothing: a changed tracked file stops the task",
+        "product": "Review Findings in `task.md`"
+      },
+      {
+        "role": "judge",
+        "does": "Optional. Reads the plan and the diff, says whether to merge.",
+        "changes": "nothing",
+        "product": "Verdict in `task.md`"
+      }
+    ],
+    "bindH3": "Bind each role to a profile.",
+    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds both CLIs. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
+    "bindLink": "Every setting →"
+  },
+  "harnesses": {
+    "h2": "Two harnesses, the narrowest permissions each offers.",
+    "lead": "Every flag in one table, pinned by a test. Shown: the implementer's command.",
+    "claude": "Claude Code, headless. Read tools only for the planner; `git push` and `gh` denied to the implementer and reviewer.",
+    "codex": "Codex CLI, `exec`. Read-only sandbox for the planner, workspace-write for the rest; network blocked by default. No model is reported, so the receipt says requested-only.",
+    "after": "Before each release a live run replaces the verified snapshot.",
+    "afterLink": "What was verified for {version} →"
+  },
+  "receipt": {
+    "h2": "What every dispatch leaves behind.",
+    "text": "One directory per dispatch, outside the repository, so it outlives the worktree. Variable names, never values. MIT; you pay your providers.",
+    "items": [
+      {
+        "file": "prompt.md",
+        "what": "the prompt, exactly as sent"
+      },
+      {
+        "file": "output.md",
+        "what": "the final message"
+      },
+      {
+        "file": "events.jsonl",
+        "what": "the harness's raw output"
+      },
+      {
+        "file": "run.json",
+        "what": "requested and reported model, argv, timings, usage, cost"
+      },
+      {
+        "file": "error.json",
+        "what": "on failure: phase, reason, last stderr lines"
+      },
+      {
+        "file": "signal.json",
+        "what": "what the agent signalled, and when"
+      }
+    ]
+  },
+  "install": {
+    "h2": "One command. Then *bottega new.*",
+    "text": "You need git, gh, python3 3.9 or newer, and `claude` or `codex`, logged in. bottega-kit never handles their credentials. `init` writes a starter; `doctor` checks it.",
+    "cta": "Get started →",
+    "cta2": "The process",
+    "cta3": "Changelog"
+  }
+}

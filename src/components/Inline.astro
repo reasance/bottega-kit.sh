@@ -1,0 +1,22 @@
+---
+// Inline markup for the hand-written copy in src/data/copy.json:
+// `code` sets a command or a file name in monospace, *text* sets a phrase in
+// italic (blue inside a heading). Nothing else is interpreted.
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const parts = text.split(/(`[^`]+`|\*[^*]+\*)/g).filter(Boolean);
+---
+
+{
+  parts.map((p) =>
+    p.startsWith('`') ? (
+      <code class="font-mono text-[0.9em]">{p.slice(1, -1)}</code>
+    ) : p.startsWith('*') ? (
+      <em>{p.slice(1, -1)}</em>
+    ) : (
+      p
+    )
+  )
+}

@@ -39,8 +39,12 @@ npm run sync-kit -- --allow-unreleased  # from a checkout that is not at its cle
 with `scripts/generate-og-image.mjs`: satori lays the card out in the site's
 own fonts and sharp rasterises it, so the image is the same on every machine.
 
-The home page (`src/pages/index.astro`) is the one hand-written description of
-the kit: the copy there is reviewed at every release against the README.
+The home page's copy, in `src/data/copy.json`, is the one hand-written
+description of the kit: it is reviewed at every release against the README.
+Its strings may hold `` `code` ``, `*emphasis*` (see `Inline.astro`) and the
+placeholders `{rounds}`, `{exitOk}`, `{exitRefused}`, `{exitStopped}`,
+`{proxyStripped}` and `{version}`, filled from `kit.json` at build time so no
+number is typed by hand. The OG card takes its headline from the same file.
 
 ## Develop
 
@@ -84,8 +88,8 @@ and `/privacy`.
 
 ```
 src/
-  components/   CodeBlock, Transcript, LoopDiagram, CloudflareAnalytics
-  data/         kit.json  (generated)
+  components/   CodeBlock, Transcript, Inline, LoopDiagram, CloudflareAnalytics
+  data/         kit.json (generated), copy.json (the hand-written home copy)
   layouts/      BaseLayout, DocLayout
   pages/        index.astro, 404.astro, privacy.md, docs/*.md, changelog/index.md
   styles/       global.css (design tokens)

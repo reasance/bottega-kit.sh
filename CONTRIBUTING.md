@@ -8,6 +8,10 @@
   colours mean what the signals mean (ready, needs-work, blocked) and blue
   marks the human gate; do not reuse them decoratively. A `.band` section
   inverts to cream; every token has its on-cream counterpart.
+- The home page's copy is `src/data/copy.json`; the template in
+  `src/pages/index.astro` only lays it out. Keep the fixed values (command
+  names, stop reasons, role names, receipt files) and the placeholders as
+  they are; the numbers come from the kit.
 - Keep the site static: no runtime JavaScript beyond `CodeBlock`'s copy
   button. CI fails a build whose gzipped JS exceeds 50 KB.
 - Before a PR: `npm run check && npm run build`.

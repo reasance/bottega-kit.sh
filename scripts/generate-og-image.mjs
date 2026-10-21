@@ -21,6 +21,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '..');
 const pngPath = resolve(repoRoot, 'public', 'og-image.png');
 const kit = JSON.parse(await readFile(resolve(repoRoot, 'src', 'data', 'kit.json'), 'utf8'));
+const copy = JSON.parse(await readFile(resolve(repoRoot, 'src', 'data', 'copy.json'), 'utf8'));
 
 const fontFile = (pkg, file) =>
   readFile(resolve(repoRoot, 'node_modules', '@fontsource', pkg, 'files', file));
@@ -68,6 +69,17 @@ const el = (type, style, children) => ({ type, props: { style, children } });
 const text = (content, style = {}) => el('span', { whiteSpace: 'pre', ...style }, content);
 const row = (children, style = {}) =>
   el('div', { display: 'flex', flexDirection: 'row', alignItems: 'center', ...style }, children);
+
+// A headline line from copy.json: *a phrase* is set in italic, in the human-gate blue.
+const headline = (line) =>
+  row(
+    line
+      .split(/(\*[^*]+\*)/g)
+      .filter(Boolean)
+      .map((p) =>
+        p.startsWith('*') ? text(p.slice(1, -1), { fontStyle: 'italic', color: c.you }) : text(p)
+      )
+  );
 
 const mono = { fontFamily: 'JetBrains Mono', fontSize: 21, lineHeight: 1.7, color: c.cream };
 // The arrow the kit prints, U+2192, is in none of the Google subsets of the
@@ -172,10 +184,7 @@ const card = el(
         color: c.cream,
         letterSpacing: -1
       },
-      [
-        text('You approve the plan.'),
-        row([text('The agents do '), text('the rounds.', { fontStyle: 'italic', color: c.you })])
-      ]
+      copy.hero.h1.map(headline)
     ),
     // the transcript
     el(

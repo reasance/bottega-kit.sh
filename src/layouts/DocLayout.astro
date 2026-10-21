@@ -41,27 +41,27 @@ const isCurrent = (href: string) => href.replace(/\/$/, '') === current.replace(
 ---
 
 <BaseLayout frontmatter={baseFrontmatter}>
-  <div class="lg:grid lg:grid-cols-[14rem_1fr] lg:gap-12">
-    <aside class="mb-6 lg:mb-0">
+  <div class="lg:grid lg:grid-cols-[13rem_1fr] lg:gap-16">
+    <aside class="mb-8 lg:mb-0">
       <nav
         aria-label="Documentation"
-        class="text-sm flex flex-wrap gap-x-4 gap-y-1.5 lg:gap-y-5 lg:flex-col lg:sticky lg:top-6"
+        class="font-mono text-[0.8rem] flex flex-wrap gap-x-5 gap-y-2 lg:gap-y-6 lg:flex-col lg:sticky lg:top-8"
       >
         {
           docNav.map((g) => (
             <div class="contents lg:block">
-              <p class="eyebrow mb-2 hidden lg:block">{g.group}</p>
-              <ul class="flex flex-wrap lg:flex-col gap-x-4 gap-y-1.5">
+              <p class="eyebrow mb-2.5 hidden lg:block">{g.group}</p>
+              <ul class="flex flex-wrap lg:flex-col gap-x-5 gap-y-2">
                 {g.items.map((item) => (
                   <li>
                     <a
                       href={item.href}
                       aria-current={isCurrent(item.href) ? 'page' : undefined}
                       class:list={[
-                        'hover:text-[var(--color-ink)]',
+                        'hover:text-[var(--color-you)] transition-colors',
                         isCurrent(item.href)
-                          ? 'text-[var(--color-ink)] font-medium'
-                          : 'text-[var(--color-ink-soft)]'
+                          ? 'text-[var(--color-you)] lg:border-l lg:border-[var(--color-you)] lg:pl-3 lg:-ml-3'
+                          : 'text-[var(--color-cream-soft)]'
                       ]}
                     >
                       {item.label}

@@ -1,10 +1,17 @@
 ---
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-sans/400.css';
+import '@fontsource/instrument-sans/500.css';
+import '@fontsource/instrument-sans/600.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
 import '../styles/global.css';
 import CloudflareAnalytics from '../components/CloudflareAnalytics.astro';
 import kit from '../data/kit.json';
 
 const SITE_DESCRIPTION =
-  'A planner, an implementer, a reviewer and an optional judge on the coding agents you already have, Claude Code and Codex, one role each, in a git worktree, with a receipt for every step.';
+  'You approve the plan; the agents do the rounds. A planner, an implementer, a reviewer and an optional judge on Claude Code and Codex, one role each, in a git worktree, with a receipt for every dispatch.';
 
 interface PageMeta {
   title?: string;
@@ -21,23 +28,28 @@ interface Props extends PageMeta {
 
 const merged: PageMeta = { ...Astro.props, ...Astro.props.frontmatter };
 const {
-  title = 'bottega-kit — a coding-agent loop on your own machine',
+  title = 'bottega-kit — you approve the plan, the agents do the rounds',
   description = SITE_DESCRIPTION,
   path = '/',
   doc: isDoc = false
 } = merged;
 
 const siteOrigin = Astro.site ?? new URL('https://bottega-kit-sh.8004dev.workers.dev');
-const canonical = new URL(path === '/' || path.endsWith('/') ? path : path + '/', siteOrigin).toString();
+const canonical = new URL(
+  path === '/' || path.endsWith('/') ? path : path + '/',
+  siteOrigin
+).toString();
 const ogImage = new URL('/og-image.png', siteOrigin).toString();
 const ogAlt =
-  'bottega-kit. One plan you approve. Rounds of build and review. A pull request at the end. Claude Code and Codex, one role each, in a git worktree, with a receipt for every step.';
+  'bottega-kit. You approve the plan. The agents do the rounds. Claude Code and Codex, one role each, in a git worktree, with a receipt for every dispatch.';
 
 const nav = [
-  { href: '/#loop', label: 'How a task runs' },
-  { href: '/docs/', label: 'Get started' },
-  { href: '/docs/process/', label: 'The process' }
+  { href: '/#commands', label: 'Commands' },
+  { href: '/#loop', label: 'The loop' },
+  { href: '/#roles', label: 'Roles' },
+  { href: '/docs/', label: 'Docs' }
 ];
+const navLink = 'hover:text-[var(--color-you)] transition-colors';
 ---
 
 <!doctype html>
@@ -48,16 +60,10 @@ const nav = [
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="matteoscurati" />
-    <meta name="theme-color" content="#f4f1ea" />
-    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#161210" />
+    <meta name="color-scheme" content="dark" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..700,0..100&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
-    />
     {isDoc && <link rel="stylesheet" href="/prose.css" />}
 
     <meta property="og:type" content="website" />
@@ -100,33 +106,35 @@ const nav = [
   <body>
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-[var(--color-ink)] focus:text-[var(--color-paper)]"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-[var(--color-cream)] focus:text-[var(--color-soot)]"
       >Skip to content</a
     >
-    <header class="border-b border-[var(--color-line-strong)]">
+    <header class="border-b border-[var(--color-line)]">
       <nav
-        class="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-1"
+        class="max-w-[76rem] mx-auto px-5 sm:px-8 min-h-16 py-3 flex flex-wrap items-center justify-between gap-x-8 gap-y-2"
       >
-        <a href="/" class="font-mono font-medium tracking-tight flex items-center gap-2 whitespace-nowrap">
-          <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-          bottega-kit
+        <a href="/" class="flex items-center gap-3 whitespace-nowrap">
+          <span class="mark" aria-hidden="true"></span>
+          <span class="display text-[1.45rem] leading-none">bottega-kit</span>
+          <span
+            class="font-mono text-[0.7rem] text-[var(--color-cream-soft)] border border-[var(--color-line)] px-1.5 py-0.5 leading-none"
+            >v{kit.version}</span
+          >
         </a>
-        <ul class="flex flex-wrap w-full sm:w-auto justify-start sm:justify-end gap-x-4 gap-y-1 text-sm">
+        <ul
+          class="flex flex-wrap w-full sm:w-auto justify-start sm:justify-end gap-x-5 gap-y-1 font-mono text-[0.8rem] tracking-wide text-[var(--color-cream-soft)]"
+        >
           {
             nav.map((item) => (
               <li>
-                <a href={item.href} class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]">
+                <a href={item.href} class={navLink}>
                   {item.label}
                 </a>
               </li>
             ))
           }
           <li>
-            <a
-              href="https://github.com/matteoscurati/bottega-kit"
-              class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
-              rel="noopener"
-            >
+            <a href="https://github.com/matteoscurati/bottega-kit" class={navLink} rel="noopener">
               GitHub ↗
             </a>
           </li>
@@ -134,45 +142,27 @@ const nav = [
       </nav>
     </header>
 
-    <main id="main" class:list={['max-w-6xl mx-auto px-6', isDoc ? 'doc py-12' : 'py-8']}>
+    <main id="main" class:list={[isDoc ? 'doc max-w-[76rem] mx-auto px-5 sm:px-8 py-12' : '']}>
       <slot />
     </main>
 
-    <footer class="border-t border-[var(--color-line-strong)] mt-24">
+    <footer class="border-t border-[var(--color-line)]">
       <div
-        class="max-w-6xl mx-auto px-6 py-8 text-sm text-[var(--color-ink-soft)] flex flex-col sm:flex-row justify-between gap-3"
+        class="max-w-[76rem] mx-auto px-5 sm:px-8 py-8 font-mono text-[0.8rem] text-[var(--color-cream-soft)] flex flex-col sm:flex-row justify-between gap-3"
       >
         <span>
-          Code: <a href="https://opensource.org/licenses/MIT" class="hover:text-[var(--color-ink)]">MIT</a>
-          · <a href="/privacy/" class="hover:text-[var(--color-ink)]">Privacy</a>
-          · <a href="https://github.com/matteoscurati/bottega-kit" class="hover:text-[var(--color-ink)]" rel="noopener"
+          <a href="https://opensource.org/licenses/MIT" class={navLink}>MIT</a>
+          <span aria-hidden="true"> · </span>
+          <a href="/privacy/" class={navLink}>Privacy</a>
+          <span aria-hidden="true"> · </span>
+          <a href="https://github.com/matteoscurati/bottega-kit" class={navLink} rel="noopener"
             >GitHub</a
           >
-          · <a href="/changelog/" class="hover:text-[var(--color-ink)]">Changelog</a>
+          <span aria-hidden="true"> · </span>
+          <a href="/changelog/" class={navLink}>Changelog</a>
         </span>
-        <span class="font-mono">v{kit.version} · {kit.releaseDate}</span>
+        <span>bottega-kit {kit.version} · {kit.releaseDate}</span>
       </div>
     </footer>
   </body>
 </html>
-
-<style>
-  /* The brand mark: four squares, one per role, the last one the human gate. */
-  .mark {
-    display: inline-grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    width: 12px;
-    height: 12px;
-  }
-  .mark i {
-    display: block;
-    background: var(--color-ink);
-  }
-  .mark i:nth-child(3) {
-    background: var(--color-ready);
-  }
-  .mark i:nth-child(4) {
-    background: var(--color-you);
-  }
-</style>

@@ -7,20 +7,22 @@ worktree, with a receipt for every step.
 
 Built with **Astro 5** + **Tailwind v4** + **TypeScript**. Static-only output.
 The only runtime JavaScript is the copy button on code blocks. The loop
-diagram on the home page is inline SVG.
+diagram on the home page is inline SVG. Fonts (Instrument Serif, Instrument
+Sans, JetBrains Mono) are self-hosted from the `@fontsource` packages: no
+request leaves the site but the analytics beacon.
 
 ## What the site shows, and where it comes from
 
 Everything that describes the kit is generated from the kit checkout, never
 written by hand here:
 
-| on the site                                                       | source in `../bottega-kit`                                                                 |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| version and release date in the footer and the hero               | `package.json`, `CHANGELOG.md`                                                             |
+| on the site                                                                                                  | source in `../bottega-kit`                                                              |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| version and release date in the footer and the hero                                                          | `package.json`, `CHANGELOG.md`                                                          |
 | the starter configuration, the effort sets, the default round cap, the exit codes, the harness argv per role | `bin/lib/bottega/config.py`, `util.py`, `harness/__init__.py`, imported through python3 |
-| `/docs/` (the README), `/docs/process`, `/docs/configuration`, `/docs/compatibility`, `/docs/later` | `README.md`, `docs/*.md`                                                       |
-| `/docs/prompts`                                                   | `templates/task.md`, `prompts/*.md`                                                        |
-| `/changelog`                                                      | `CHANGELOG.md`                                                                             |
+| `/docs/` (the README), `/docs/process`, `/docs/configuration`, `/docs/compatibility`, `/docs/later`          | `README.md`, `docs/*.md`                                                                |
+| `/docs/prompts`                                                                                              | `templates/task.md`, `prompts/*.md`                                                     |
+| `/changelog`                                                                                                 | `CHANGELOG.md`                                                                          |
 
 `scripts/sync-kit.mjs` reads those files, asks python3 for the kit's tables
 (an import of its modules, no command of the kit runs) and rewrites the synced
@@ -34,7 +36,8 @@ npm run sync-kit -- --allow-unreleased  # from a checkout that is not at its cle
 ```
 
 `npm run build` runs the check first, then regenerates `public/og-image.png`
-from `public/og-image.svg`.
+with `scripts/generate-og-image.mjs`: satori lays the card out in the site's
+own fonts and sharp rasterises it, so the image is the same on every machine.
 
 The home page (`src/pages/index.astro`) is the one hand-written description of
 the kit: the copy there is reviewed at every release against the README.
@@ -81,13 +84,13 @@ and `/privacy`.
 
 ```
 src/
-  components/   CodeBlock, DispatchLog, LoopDiagram, CloudflareAnalytics
+  components/   CodeBlock, Transcript, LoopDiagram, CloudflareAnalytics
   data/         kit.json  (generated)
   layouts/      BaseLayout, DocLayout
   pages/        index.astro, 404.astro, privacy.md, docs/*.md, changelog/index.md
   styles/       global.css (design tokens)
 scripts/        sync-kit.mjs, generate-og-image.mjs
-public/         favicon, og-image, prose.css, _headers, robots.txt
+public/         favicon.svg, og-image.png (generated), prose.css, _headers, robots.txt
 wrangler.jsonc  Workers Static Assets config
 ```
 

@@ -1,12 +1,13 @@
-/* MDX prose typography (.doc) — imported only by DocLayout, so it ships only
- * with long-form pages (/docs/*, /changelog, /privacy). Non-doc pages (/)
- * never load these rules. Element rules that would restyle a component
- * (lists, paragraphs, tables) skip anything inside `.not-prose`.
+/* Prose typography (.doc), loaded only by DocLayout, so it ships only with
+ * long-form pages (/docs/*, /changelog, /privacy). The home page never loads
+ * these rules. Element rules that would restyle a component (lists,
+ * paragraphs, tables) skip anything inside `.not-prose`.
  *
  * `.doc pre` rules skip `.not-prose` regions: this file is unlayered, so it
  * beats Tailwind's layered utilities whatever the specificity, and a
- * <CodeBlock> inside the docs keeps its own ink block only that way. Inline-code rules
- * use normal specificity because no component renders bare <code> inside MDX.
+ * <CodeBlock> inside the docs keeps its own block only that way. Inline-code
+ * rules use normal specificity because no component renders bare <code>
+ * inside Markdown.
  */
 
 .doc h1,
@@ -17,24 +18,20 @@
 .doc ul:not(.not-prose *),
 .doc ol:not(.not-prose *),
 .doc blockquote {
-  max-width: 62ch;
+  max-width: 64ch;
 }
 
 .doc h1 {
-  font-size: 2.25rem;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-  margin: 0 0 1rem;
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0 0 1.25rem;
 }
 
 .doc h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.3;
-  margin: 3rem 0 0.75rem;
-  padding-top: 1.5rem;
+  font-size: 2rem;
+  line-height: 1.1;
+  margin: 3.25rem 0 0.9rem;
+  padding-top: 1.75rem;
   border-top: 1px solid var(--color-line);
 }
 
@@ -45,17 +42,19 @@
 }
 
 .doc h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.4;
-  margin: 2rem 0 0.5rem;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  margin: 2.25rem 0 0.5rem;
 }
 
 .doc h4 {
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   line-height: 1.4;
-  margin: 1.5rem 0 0.25rem;
+  margin: 1.75rem 0 0.35rem;
+  color: var(--color-cream-soft);
 }
 
 .doc p:not(.not-prose *) {
@@ -65,7 +64,7 @@
 
 .doc strong {
   font-weight: 600;
-  color: var(--color-ink);
+  color: var(--color-cream);
 }
 
 .doc em {
@@ -73,14 +72,17 @@
 }
 
 .doc a {
-  color: var(--color-ink);
+  color: var(--color-cream);
   text-decoration: underline;
-  text-decoration-color: var(--color-line);
+  text-decoration-color: var(--color-line-strong);
   text-underline-offset: 3px;
-  transition: text-decoration-color 0.15s ease;
+  transition:
+    text-decoration-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .doc a:hover {
+  color: var(--color-you);
   text-decoration-color: var(--color-you);
 }
 
@@ -105,7 +107,7 @@
 }
 
 .doc li::marker {
-  color: var(--color-ink-soft);
+  color: var(--color-cream-soft);
 }
 
 .doc li > ul,
@@ -116,33 +118,30 @@
 .doc :not(pre) > code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  background: rgb(16 25 43 / 0.06);
+  background: rgb(243 236 224 / 0.09);
   border-radius: 3px;
   padding: 0.05em 0.3em;
-  color: var(--color-ink);
+  color: var(--color-cream);
   overflow-wrap: anywhere;
 }
 
 :where(.doc pre:not(.not-prose *)) {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  background: var(--color-panel);
+  font-size: 0.84rem;
+  line-height: 1.65;
+  background: var(--color-coal-deep);
   border: 1px solid var(--color-line);
-  border-radius: 6px;
   padding: 1rem 1.25rem;
   overflow-x: auto;
   margin: 0 0 1.25rem;
 }
 
-/* Shiki's blocks in Markdown look like the home page's: ink, square. */
+/* Shiki's blocks in Markdown look like the home page's: deep coal, square. */
 .doc pre.astro-code {
-  background: var(--color-ink) !important;
-  border: 0;
-  border-radius: 0;
+  background: var(--color-coal-deep) !important;
 }
 
-/* github-dark comments (#6A737D) are 3.4:1 on ink; this grey is 5.7:1. */
+/* github-dark comments (#6A737D) are 3.4:1 on the block; this grey is 5.7:1. */
 .doc .astro-code span[style*='#6A737D' i] {
   color: #8b949e !important;
 }
@@ -165,7 +164,7 @@
 }
 
 .doc thead:not(.not-prose *) {
-  border-bottom: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line-strong);
 }
 
 .doc th:not(.not-prose *),
@@ -177,15 +176,23 @@
 }
 
 .doc th:not(.not-prose *) {
-  font-weight: 600;
-  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--color-cream-soft);
   text-transform: uppercase;
   font-size: 0.7rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .doc tbody tr:not(.not-prose *):hover {
-  background: var(--color-panel);
+  background: var(--color-coal);
+}
+
+/* A key in a table cell never breaks mid-word; the table scrolls instead. */
+.doc td:not(.not-prose *) > code,
+.doc th:not(.not-prose *) > code {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 .doc hr {
@@ -198,7 +205,7 @@
   border-left: 2px solid var(--color-you);
   padding-left: 1rem;
   margin: 1.5rem 0;
-  color: var(--color-ink-soft);
+  color: var(--color-cream-soft);
   font-style: italic;
 }
 
@@ -219,14 +226,13 @@
   margin: 0 0 0.5rem;
 }
 
-/* Component grids escape the 62ch text constraint (e.g. AgentLogo matrix). */
+/* Component grids escape the text measure. */
 .doc .not-prose {
   max-width: none;
   margin: 1.5rem 0 2rem;
 }
 
-/* Vertical rhythm around <CodeBlock> instances embedded in MDX.              */
-/* Targets the public `cb-wrap` class on CodeBlock's root element.            */
+/* Vertical rhythm around <CodeBlock> instances embedded in Markdown. */
 .doc .cb-wrap {
   margin: 0 0 1.25rem;
 }

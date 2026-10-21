@@ -2,44 +2,44 @@
 
 /* Design tokens.
  *
- * A workshop bench: warm paper, ink, hairline rules, and three status
- * colours with the meanings the signals have, never decorative:
- *   green = ready / done
- *   amber = needs-work, and a stop you resume
- *   red   = blocked, refused, stopped
- * Blue marks the human gate: you approve the plan, you open the pull request.
+ * A workshop after hours: soot, coal and cream. The page is dark and warm,
+ * type is a serif at display sizes and a monospace for anything the kit
+ * prints. Four colours carry meaning and are never decorative:
+ *   ready   green  = ready / done
+ *   work    amber  = needs-work, and a stop you resume
+ *   blocked red    = blocked, refused, stopped
+ *   you     blue   = the human gate: you approve the plan, you open the PR
+ * Each has an `-ink` variant for the cream bands, where the page inverts.
  */
 @theme {
-  --color-paper: #f4f1ea;
-  --color-panel: #faf8f3;
-  --color-ink: #1c1a17;
-  --color-ink-soft: #5b5650;
-  --color-line: #d4cec2;
-  --color-line-strong: #1c1a17;
+  --color-soot: #161210;
+  --color-coal: #1e1915;
+  --color-coal-deep: #0e0b09;
+  --color-line: #332b25;
+  --color-line-strong: #5f544b;
+  --color-cream: #f3ece0;
+  --color-cream-soft: #b5a99a;
+  --color-ink: #161210;
+  --color-ink-soft: #5c5349;
 
-  --color-ready: #1f7a4f;
-  --color-ready-soft: #dcefe3;
-  --color-ready-text: #176040;
-  --color-work: #b8740e;
-  --color-work-soft: #f8e9c8;
-  --color-work-text: #8a5600;
-  --color-blocked: #b23a2a;
-  --color-blocked-soft: #f5dcd6;
-  --color-you: #2b5d9b;
-  --color-you-soft: #dbe6f4;
-  --color-ready-on-ink: #5ec892;
-  --color-work-on-ink: #e9a93a;
-  --color-blocked-on-ink: #ef7f6c;
+  --color-ready: #5fc48f;
+  --color-work: #ecaa3c;
+  --color-blocked: #f2806a;
+  --color-you: #a9b8ff;
+  --color-ready-ink: #1b6f47;
+  --color-work-ink: #8a5600;
+  --color-blocked-ink: #b2392a;
+  --color-you-ink: #3450b4;
 
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 }
 
 html,
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-soot);
+  color: var(--color-cream);
   font-family: var(--font-sans);
   font-size: 17px;
   line-height: 1.55;
@@ -56,12 +56,17 @@ h2,
 h3,
 .display {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.08;
-  font-variation-settings:
-    'opsz' 72,
-    'SOFT' 30;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+h1 em,
+h2 em,
+h3 em,
+.display em {
+  font-style: italic;
+  color: var(--color-you);
 }
 
 code,
@@ -83,65 +88,182 @@ kbd,
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--color-you);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--color-cream);
+  color: var(--color-soot);
 }
 
-/* Full-bleed rule: sections are separated by one solid line, never by cards. */
-.rule {
-  border-top: 1px solid var(--color-line-strong);
+/* The cream band: the page inverts. Everything inside reads on cream. */
+.band {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+.band ::selection {
+  background: var(--color-soot);
+  color: var(--color-cream);
+}
+.band h1 em,
+.band h2 em,
+.band h3 em,
+.band .display em {
+  color: var(--color-you-ink);
+}
+
+/* Section ledger: a rule, a mono index on the left, the heading on the right. */
+.sec {
+  border-top: 1px solid var(--color-line);
+}
+.idx {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--color-cream-soft);
+}
+.band .idx {
+  color: var(--color-ink-soft);
 }
 
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--color-cream-soft);
+}
+.band .eyebrow {
   color: var(--color-ink-soft);
 }
 
-/* An ink button: paper text on ink. */
+/* Buttons: cream on soot; inverted inside a band. */
 .btn {
-  background: var(--color-ink);
-  color: var(--color-paper);
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  background: var(--color-cream);
+  color: var(--color-soot);
+  padding: 0.7rem 1.1rem;
+  border: 1px solid var(--color-cream);
+}
+.btn:hover {
+  background: var(--color-you);
+  border-color: var(--color-you);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--color-cream);
+  border-color: var(--color-line-strong);
+}
+.btn-ghost:hover {
+  background: transparent;
+  color: var(--color-you);
+  border-color: var(--color-you);
+}
+.band .btn {
+  background: var(--color-soot);
+  color: var(--color-cream);
+  border-color: var(--color-soot);
+}
+.band .btn:hover {
+  background: var(--color-you-ink);
+  border-color: var(--color-you-ink);
+}
+.band .btn-ghost {
+  background: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-ink-soft);
+}
+.band .btn-ghost:hover {
+  color: var(--color-you-ink);
+  border-color: var(--color-you-ink);
 }
 
-/* Status words: a coloured dot and the signal, stated plainly. */
+/* Links in running text. */
+.lnk {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--color-line-strong);
+}
+.lnk:hover {
+  text-decoration-color: var(--color-you);
+  color: var(--color-you);
+}
+.band .lnk {
+  text-decoration-color: var(--color-ink-soft);
+}
+.band .lnk:hover {
+  color: var(--color-you-ink);
+  text-decoration-color: var(--color-you-ink);
+}
+
+/* Status words: the signal, in its colour, with a dot. */
 .status {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   line-height: 1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   white-space: nowrap;
 }
 .status::before {
   content: '';
   display: inline-block;
-  width: 0.55em;
-  height: 0.55em;
+  width: 0.5em;
+  height: 0.5em;
   border-radius: 50%;
   margin-right: 0.45em;
-  vertical-align: 0.05em;
+  vertical-align: 0.08em;
   background: currentColor;
 }
 .status-ready {
-  color: var(--color-ready-text);
+  color: var(--color-ready);
 }
 .status-work {
-  color: var(--color-work-text);
+  color: var(--color-work);
 }
 .status-blocked {
   color: var(--color-blocked);
 }
 .status-you {
   color: var(--color-you);
+}
+.band .status-ready {
+  color: var(--color-ready-ink);
+}
+.band .status-work {
+  color: var(--color-work-ink);
+}
+.band .status-blocked {
+  color: var(--color-blocked-ink);
+}
+.band .status-you {
+  color: var(--color-you-ink);
+}
+
+/* The brand mark: a ring (the rounds) and a dot (the gate). */
+.mark {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+.mark::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-you);
+}
+.band .mark::after {
+  background: var(--color-you-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -162,7 +284,7 @@ summary:focus-visible {
 .dg text {
   font-family: var(--font-mono);
   font-size: 12px;
-  fill: var(--color-ink);
+  fill: var(--color-cream);
 }
 .dg .sm {
   font-size: 11px;
@@ -172,14 +294,14 @@ summary:focus-visible {
   font-weight: 500;
 }
 .dg .soft {
-  fill: var(--color-ink-soft);
+  fill: var(--color-cream-soft);
 }
 .dg .ok {
-  fill: var(--color-ready-text);
+  fill: var(--color-ready);
   font-weight: 500;
 }
 .dg .warn {
-  fill: var(--color-work-text);
+  fill: var(--color-work);
   font-weight: 500;
 }
 .dg .err {
@@ -197,19 +319,22 @@ summary:focus-visible {
   text-anchor: end;
 }
 .dg .box {
-  fill: var(--color-panel);
-  stroke: var(--color-ink);
+  fill: var(--color-coal);
+  stroke: var(--color-line-strong);
   stroke-width: 1;
 }
 .dg .you {
-  fill: var(--color-you-soft);
+  fill: color-mix(in srgb, var(--color-you) 14%, var(--color-soot));
   stroke: var(--color-you);
   stroke-width: 1.25;
 }
 .dg .path {
   fill: none;
-  stroke: var(--color-ink);
+  stroke: var(--color-cream-soft);
   stroke-width: 1.25;
+}
+.dg .faint {
+  stroke: var(--color-line-strong);
 }
 .dg .loop {
   fill: none;

@@ -14,17 +14,17 @@ const { code, lang = 'sh', label, wrap = false } = Astro.props;
 <div class="cb-wrap min-w-0">
   {
     /* Mono like an eyebrow, but not uppercased: labels can hold a file path. */
-    label && <p class="mb-2 font-mono text-[0.75rem] text-[var(--color-ink-soft)]">{label}</p>
+    label && <p class="mb-2 font-mono text-[0.75rem] text-[var(--color-cream-soft)]">{label}</p>
   }
   <div class="relative group">
     <pre
       class:list={[
-        'bg-[var(--color-ink)] text-[var(--color-paper)] px-4 py-3 overflow-x-auto text-[0.85rem] leading-relaxed w-full',
+        'bg-[var(--color-coal-deep)] text-[var(--color-cream)] border border-[var(--color-line)] px-4 py-3.5 overflow-x-auto text-[0.84rem] leading-relaxed w-full',
         wrap && 'whitespace-pre-wrap [overflow-wrap:anywhere]'
       ]}><code data-lang={lang}>{code}</code></pre>
     <button
       type="button"
-      class="absolute top-2 right-2 text-xs px-2 py-1 bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-line)] font-mono opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+      class="absolute top-2 right-2 text-[0.7rem] px-2 py-1 bg-[var(--color-coal)] text-[var(--color-cream-soft)] border border-[var(--color-line-strong)] font-mono opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity hover:text-[var(--color-cream)]"
       data-copy={code}
       aria-label="Copy code to clipboard"
     >

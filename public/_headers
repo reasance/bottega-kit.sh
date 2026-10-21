@@ -7,8 +7,6 @@
 # OG image and favicon — medium cache, edits are infrequent but possible.
 /og-image.png
   Cache-Control: public, max-age=86400, must-revalidate
-/og-image.svg
-  Cache-Control: public, max-age=86400, must-revalidate
 /favicon.svg
   Cache-Control: public, max-age=604800, must-revalidate
 

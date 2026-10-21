@@ -1,0 +1,49 @@
+---
+// A terminal transcript: the commands you type and what the kit prints.
+// Prompts are `$ ` lines in the human-gate colour; a dispatch line is the
+// one line `plan` and `run` print, its result coloured as the signal is;
+// any other line is printed as it is.
+export interface Dispatch {
+  seq: string;
+  role: string;
+  profile: string;
+  model: string;
+  result: string;
+  time: string;
+}
+export type Line = { cmd: string } | { dispatch: Dispatch } | { out: string };
+interface Props {
+  lines: Line[];
+  label?: string;
+}
+const { lines, label } = Astro.props;
+const tone = (result: string) =>
+  result === 'ready' || result === 'done' || result === 'planned'
+    ? 'text-[var(--color-ready)]'
+    : result === 'needs-work'
+      ? 'text-[var(--color-work)]'
+      : result === 'blocked' || result.startsWith('stopped')
+        ? 'text-[var(--color-blocked)]'
+        : 'text-[var(--color-cream)]';
+const soft = 'text-[var(--color-cream-soft)]';
+---
+
+<figure class="min-w-0">
+  <pre
+    class="bg-[var(--color-coal-deep)] border border-[var(--color-line-strong)] text-[var(--color-cream)] px-5 py-4 overflow-x-auto text-[0.84rem] leading-[1.7] w-full"><code>{lines.map((l) => (
+      'cmd' in l ? (
+        <span class="block"><span class="text-[var(--color-you)]">$</span> {l.cmd}</span>
+      ) : 'dispatch' in l ? (
+        <span class="block"><span class={soft}>{l.dispatch.seq}</span> {l.dispatch.role.padEnd(11)} {l.dispatch.profile.padEnd(13)} <span class={soft}>{l.dispatch.model.padEnd(17)}</span>→ <span class={tone(l.dispatch.result)}>{l.dispatch.result}</span> <span class={soft}>({l.dispatch.time})</span></span>
+      ) : (
+        <span class="block">{l.out}</span>
+      )
+    ))}</code></pre>
+  {
+    label && (
+      <figcaption class="mt-3 font-mono text-[0.75rem] text-[var(--color-cream-soft)] max-w-3xl">
+        {label}
+      </figcaption>
+    )
+  }
+</figure>

@@ -3,11 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Page not found — bottega-kit" path="/404/">
-  <section class="pt-10 pb-14 md:pt-16">
-    <h1 class="text-[2.6rem] md:text-[3.4rem] mb-8">Page not found</h1>
-    <p class="flex flex-wrap gap-x-6 gap-y-2">
-      <a href="/" class="underline underline-offset-4">Home</a>
-      <a href="/docs/" class="underline underline-offset-4">Getting started</a>
+  <section class="max-w-[76rem] mx-auto px-5 sm:px-8 pt-20 pb-28">
+    <p class="idx mb-6">404</p>
+    <h1 class="text-[3rem] md:text-[4.5rem] mb-8">Nothing at this address.</h1>
+    <p class="flex flex-wrap gap-4">
+      <a href="/" class="btn">Home</a>
+      <a href="/docs/" class="btn btn-ghost">Getting started</a>
     </p>
   </section>
 </BaseLayout>

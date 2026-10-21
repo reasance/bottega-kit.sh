@@ -19,7 +19,15 @@ import kit from '../data/kit.json';
     blocked stops; the judge says ready or stops; pr opens the pull request.
   </desc>
   <defs>
-    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <marker
+      id="ah"
+      viewBox="0 0 10 10"
+      refX="9"
+      refY="5"
+      markerWidth="7"
+      markerHeight="7"
+      orient="auto-start-reverse"
+    >
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
     </marker>
   </defs>
@@ -32,7 +40,7 @@ import kit from '../data/kit.json';
     <text x="550" y="38" class="mid">bottega run</text>
     <text x="900" y="38" class="mid">bottega pr</text>
   </g>
-  <line x1="405" y1="44" x2="805" y2="44" class="path" style="stroke: var(--color-line)"></line>
+  <line x1="405" y1="44" x2="805" y2="44" class="path faint"></line>
 
   <!-- boxes -->
   <rect x="20" y="60" width="70" height="44" class="box"></rect>
@@ -57,7 +65,7 @@ import kit from '../data/kit.json';
   <text x="900" y="87" class="mid ttl you-t">pr</text>
 
   <!-- the straight path -->
-  <g style="color: var(--color-ink)">
+  <g style="color: var(--color-cream-soft)">
     <line x1="90" y1="82" x2="116" y2="82" class="path" marker-end="url(#ah)"></line>
     <line x1="198" y1="82" x2="248" y2="82" class="path" marker-end="url(#ah)"></line>
     <line x1="340" y1="82" x2="398" y2="82" class="path" marker-end="url(#ah)"></line>
@@ -71,8 +79,8 @@ import kit from '../data/kit.json';
   <text x="831" y="72" class="mid sm ok">ready</text>
 
   <!-- questions: plan again -->
-  <g style="color: var(--color-ink-soft)">
-    <path d="M143 60 C143 30, 173 30, 173 60" class="path" style="stroke: var(--color-line)" marker-end="url(#ah)"></path>
+  <g style="color: var(--color-line-strong)">
+    <path d="M143 60 C143 30, 173 30, 173 60" class="path faint" marker-end="url(#ah)"></path>
   </g>
   <text x="158" y="122" class="mid sm soft">questions? answer,</text>
   <text x="158" y="136" class="mid sm soft">then plan again</text>
@@ -85,7 +93,9 @@ import kit from '../data/kit.json';
   <g style="color: var(--color-work)">
     <path d="M630 104 L630 150 L518 150 L518 106" class="loop" marker-end="url(#ah)"></path>
   </g>
-  <text x="400" y="166" class="mid sm warn">needs-work · the next round, up to the cap ({kit.defaultRounds} by default)</text>
+  <text x="400" y="166" class="mid sm warn"
+    >needs-work · the next round, up to the cap ({kit.defaultRounds} by default)</text
+  >
 
   <!-- blocked / cap reached / judge needs-work: stops -->
   <g style="color: var(--color-blocked)">
@@ -94,7 +104,9 @@ import kit from '../data/kit.json';
   </g>
   <text x="655" y="214" class="mid sm err">blocked · cap-reached</text>
   <text x="785" y="214" class="mid sm err">needs-work</text>
-  <text x="720" y="232" class="mid sm soft">stopped, exit {kit.exitCodes.stopped} · bottega resume</text>
+  <text x="720" y="232" class="mid sm soft"
+    >stopped, exit {kit.exitCodes.stopped} · bottega resume</text
+  >
 
   <!-- what each writes -->
   <text x="55" y="122" class="mid sm soft">task.md,</text>

@@ -165,7 +165,7 @@ const card = el(
       ],
       { height: 40 }
     ),
-    text('A CODING-AGENT LOOP ON YOUR OWN MACHINE · CLAUDE CODE + CODEX', {
+    text('A CODING-AGENT LOOP ON YOUR OWN MACHINE · CLAUDE CODE + CODEX + KIMI CODE', {
       fontFamily: 'JetBrains Mono',
       fontSize: 14,
       color: c.creamSoft,

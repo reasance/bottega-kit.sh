@@ -120,7 +120,8 @@ if (head[1] !== pkg.version) fail(`CHANGELOG head ${head[1]} != package.json ${p
 // ---- the kit's own tables, through python3 ------------------------------------
 // An import of the kit's modules (standard library only), isolated from the
 // user's site-packages and PYTHONPATH. The placeholders of the harness matrix
-// are rendered as <model>, <effort> and so on.
+// are rendered as <model>, <effort> and so on; the prompt kimi takes as an
+// argument as <prompt.md>, as its receipts record it.
 const PY = `
 import json, sys
 sys.path.insert(0, sys.argv[1])
@@ -128,7 +129,8 @@ from bottega import config, util
 from bottega.harness import HARNESS_MATRIX, PROXY_STRIPPED, matrix_argv
 from bottega.version import __version__
 values = {"model": "<model>", "effort": "<effort>", "task_dir": "<task dir>",
-          "run_dir": "<run dir>", "worktree": "<worktree>", "bottega": "<bottega>"}
+          "run_dir": "<run dir>", "worktree": "<worktree>", "bottega": "<bottega>",
+          "prompt": "<prompt.md>"}
 matrix = {h: {r: matrix_argv(h, r, values) for r in HARNESS_MATRIX[h]["roles"]}
           for h in sorted(HARNESS_MATRIX)}
 print(json.dumps({

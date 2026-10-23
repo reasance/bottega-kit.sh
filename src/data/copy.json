@@ -1,10 +1,10 @@
 {
   "meta": {
     "title": "bottega-kit: you approve the plan, the agents do the rounds",
-    "description": "Planner, implementer, reviewer and optional judge on Claude Code and Codex. A receipt per dispatch."
+    "description": "Planner, implementer, reviewer and optional judge on Claude Code, Codex and Kimi Code. A receipt per dispatch."
   },
   "hero": {
-    "eyebrow": "Local coding-agent loop · Claude Code + Codex",
+    "eyebrow": "Local coding-agent loop · Claude Code + Codex + Kimi Code",
     "h1": [
       "You approve the plan.",
       "The agents do *the rounds.*"
@@ -129,14 +129,15 @@
       }
     ],
     "bindH3": "Bind each role to a profile.",
-    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds both CLIs. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
+    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds `claude` and `codex`. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
     "bindLink": "Every setting →"
   },
   "harnesses": {
-    "h2": "Two harnesses, the narrowest permissions each offers.",
+    "h2": "Three harnesses, the narrowest permissions each offers.",
     "lead": "Every flag in one table, pinned by a test. Shown: the implementer's command.",
     "claude": "Claude Code, headless. Read tools only for the planner; `git push` and `gh` denied to the implementer and reviewer.",
     "codex": "Codex CLI, `exec`. Read-only sandbox for the planner, workspace-write for the rest; network blocked by default. No model is reported, so the receipt says requested-only.",
+    "kimi": "Kimi Code, `-p`. An agent file gives each role its tools; `git push` to origin and `gh` fail through the environment. No model is reported, so the receipt says requested-only and keeps the tokens from the session log.",
     "after": "Before each release a live run replaces the verified snapshot.",
     "afterLink": "What was verified for {version} →"
   },
@@ -172,7 +173,7 @@
   },
   "install": {
     "h2": "One command. Then *bottega new.*",
-    "text": "You need git, gh, python3 3.9 or newer, and `claude` or `codex`, logged in. bottega-kit never handles their credentials. `init` writes a starter; `doctor` checks it.",
+    "text": "You need git, gh, python3 3.9 or newer, and `claude`, `codex` or `kimi`, logged in. bottega-kit never handles their credentials. `init` writes a starter; `doctor` checks it.",
     "cta": "Get started →",
     "cta2": "The process",
     "cta3": "Changelog"

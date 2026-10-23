@@ -34,7 +34,7 @@ const {
   doc: isDoc = false
 } = merged;
 
-const siteOrigin = Astro.site ?? new URL('https://bottega-kit-sh.8004dev.workers.dev');
+const siteOrigin = Astro.site ?? new URL('https://bottega-kit.sh');
 const canonical = new URL(
   path === '/' || path.endsWith('/') ? path : path + '/',
   siteOrigin
@@ -155,8 +155,7 @@ const navLink = 'hover:text-[var(--color-you)] transition-colors';
           <span aria-hidden="true"> · </span>
           <a href="/privacy/" class={navLink}>Privacy</a>
           <span aria-hidden="true"> · </span>
-          <a href="https://github.com/reasance/bottega-kit" class={navLink} rel="noopener"
-            >GitHub</a
+          <a href="https://github.com/reasance/bottega-kit" class={navLink} rel="noopener">GitHub</a
           >
           <span aria-hidden="true"> · </span>
           <a href="/changelog/" class={navLink}>Changelog</a>

@@ -65,11 +65,11 @@ the showcase site"): after the tag exists and npm serves the version,
 ## Deploy
 
 Production runs on **Cloudflare Workers with Static Assets**, configured in
-`wrangler.jsonc` (Worker `bottega-kit-sh`, assets from `dist/`). Until a custom
-domain exists it is served at `https://bottega-kit-sh.8004dev.workers.dev`;
-the origin is set in `astro.config.mjs` and `public/robots.txt`, and the
-custom domain goes in `wrangler.jsonc` when there is one. Two ways to deploy,
-same result:
+`wrangler.jsonc` (Worker `bottega-kit-sh`, assets from `dist/`), served at
+`https://bottega-kit.sh` and `www.bottega-kit.sh` as Workers custom domains;
+the zone is on the Cloudflare account, the domain stays registered at
+DNSimple. The origin is set in `astro.config.mjs`, `public/robots.txt` and
+the routes in `wrangler.jsonc`. Two ways to deploy, same result:
 
 - **From CI** — `.github/workflows/deploy.yml` builds and runs `wrangler
 deploy` on every push to `main`. It needs the repository secrets

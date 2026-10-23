@@ -32,7 +32,7 @@ const siteRoot = resolve(__dirname, '..');
 const kitRoot = resolve(process.env.BOTTEGA_KIT_ROOT ?? resolve(siteRoot, '..', 'bottega-kit'));
 const isCheck = process.argv.includes('--check');
 const allowUnreleased = process.argv.includes('--allow-unreleased');
-const GITHUB = 'https://github.com/matteoscurati/bottega-kit';
+const GITHUB = 'https://github.com/reasance/bottega-kit';
 
 const BEGIN = '<!-- BEGIN AUTOGEN -->';
 const END = '<!-- END AUTOGEN -->';

@@ -1,6 +1,6 @@
 # bottega-kit.sh
 
-Showcase and docs site for [`bottega-kit`](https://github.com/matteoscurati/bottega-kit):
+Showcase and docs site for [`bottega-kit`](https://github.com/reasance/bottega-kit):
 a planner, an implementer, a reviewer and an optional judge on the coding
 agents you already have, Claude Code and Codex, one role each, in a git
 worktree, with a receipt for every step.

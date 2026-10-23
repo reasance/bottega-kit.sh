@@ -15,7 +15,7 @@ GitHub Release. -->
 
 ## [Unreleased]
 
-## [0.1.0] — 2026-10-17
+## [0.1.0] — 2026-10-23
 
 The first release. A planner, an implementer, a reviewer and an optional judge
 run on Claude Code and Codex in a git worktree, with a receipt for every

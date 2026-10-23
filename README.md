@@ -74,21 +74,22 @@ the routes in `wrangler.jsonc`. Two ways to deploy, same result:
 - **From CI** — `.github/workflows/deploy.yml` builds and runs `wrangler
 deploy` on every push to `main`. It needs the repository secrets
   `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit) and `CLOUDFLARE_ACCOUNT_ID`,
-  and the optional variable `PUBLIC_CF_BEACON_TOKEN`.
+  and the optional variables `PUBLIC_UMAMI_WEBSITE_ID` and `PUBLIC_UMAMI_SRC`.
 - **From a machine** — `npx wrangler login` once, then `npm run deploy`
   (`npm run build && wrangler deploy`).
 
 ## Analytics
 
-Cloudflare Web Analytics, through `src/components/CloudflareAnalytics.astro`.
-Off unless `PUBLIC_CF_BEACON_TOKEN` is set at build time; see `.env.example`
-and `/privacy`.
+Umami, through `src/components/UmamiAnalytics.astro`. Off unless
+`PUBLIC_UMAMI_WEBSITE_ID` is set at build time; `PUBLIC_UMAMI_SRC` points at a
+self-hosted instance instead of Umami Cloud. See `.env.example` and
+`/privacy`.
 
 ## Layout
 
 ```
 src/
-  components/   CodeBlock, Transcript, Inline, LoopDiagram, CloudflareAnalytics
+  components/   CodeBlock, Transcript, Inline, LoopDiagram, UmamiAnalytics
   data/         kit.json (generated), copy.json (the hand-written home copy)
   layouts/      BaseLayout, DocLayout
   pages/        index.astro, 404.astro, privacy.md, docs/*.md, changelog/index.md

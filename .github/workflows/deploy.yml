@@ -5,8 +5,9 @@ name: Deploy
 #   CLOUDFLARE_API_TOKEN   an API token with Workers Scripts:Edit (and Workers
 #                          Routes:Edit on the zone, once a custom domain exists)
 #   CLOUDFLARE_ACCOUNT_ID  the account id
-# and one optional repository variable:
-#   PUBLIC_CF_BEACON_TOKEN the Web Analytics site token (off when unset)
+# and two optional repository variables:
+#   PUBLIC_UMAMI_WEBSITE_ID the Umami website id (analytics off when unset)
+#   PUBLIC_UMAMI_SRC        a self-hosted Umami's script.js (Umami Cloud when unset)
 
 on:
   push:
@@ -46,7 +47,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          PUBLIC_CF_BEACON_TOKEN: ${{ vars.PUBLIC_CF_BEACON_TOKEN }}
+          PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}
+          PUBLIC_UMAMI_SRC: ${{ vars.PUBLIC_UMAMI_SRC }}
       # The project's own wrangler (package.json), the one a local deploy
       # uses: wrangler-action installs an older one of its own, which fails
       # on an assets-only Worker with "Missing entry-point".

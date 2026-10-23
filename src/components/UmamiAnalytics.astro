@@ -1,0 +1,22 @@
+---
+// Umami: privacy-first, no cookies, no fingerprinting, no cross-site
+// tracking. Renders nothing unless PUBLIC_UMAMI_WEBSITE_ID is set as a build
+// variable, so analytics stay off in dev and on any deploy that does not opt
+// in. The id is a site identifier, not a secret. PUBLIC_UMAMI_SRC points at a
+// self-hosted instance; Umami Cloud's script is the default. data-domains
+// keeps previews and localhost out of the numbers.
+const websiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const src = import.meta.env.PUBLIC_UMAMI_SRC || 'https://cloud.umami.is/script.js';
+---
+
+{
+  websiteId && (
+    <script
+      is:inline
+      defer
+      src={src}
+      data-website-id={websiteId}
+      data-domains="bottega-kit.sh,www.bottega-kit.sh"
+    />
+  )
+}

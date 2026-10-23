@@ -14,7 +14,14 @@ path: '/docs'
 bottega-kit runs a planner, an implementer, a reviewer and an optional judge on the
 coding agents you already have — Claude Code and Codex today — one role each, in a
 git worktree, with a receipt for every step. You need git, gh, python3 and at least
-one of those CLIs. This is not vdaubry/bottega: the process is
+one of those CLIs.
+
+Why roles: the agent that reviews the code is not the one that wrote it, and
+it can run on another model or another vendor. You read and approve the plan
+once; after that nothing asks you anything until the task is done or stops,
+and every step is on disk for you to read.
+
+This is not vdaubry/bottega: the process is
 [theirs](https://github.com/vdaubry/bottega); the local, file-based, multi-vendor
 loop is this project.
 
@@ -35,14 +42,16 @@ you change it. Each role runs under a profile from your configuration: a
 harness, which is the CLI that runs the role (`claude` or `codex`), a model
 and an effort. One profile may serve several roles.
 
-## Current release: 0.1.0
+## Current release: 0.1.1
 
-The first release: `init`, `doctor`, `new`, `plan`, `approve`, `run`, `resume`,
-`pr` and the task commands, on the `claude` and `codex` harnesses. The loop
-was verified live on 2026-10-17, 2026-10-19 and 2026-10-20 with Claude Code
-2.1.302 to 2.1.304 and Codex CLI 0.163.0, each in every role, a reviewer on
-Z.AI's endpoint through Claude Code, and `bottega pr` opening a pull request
-on GitHub. See [docs/compatibility.md](/docs/compatibility/).
+Documentation: what to do after `run`, a task followed end to end, what a
+task costs. The commands are those of 0.1.0: `init`, `doctor`, `new`,
+`plan`, `approve`, `run`, `resume`, `pr` and the task commands, on the
+`claude` and `codex` harnesses. 0.1.1 was verified live on 2026-10-23 with
+Claude Code 2.1.309 and the starter configuration, through `bottega pr` on
+GitHub; 0.1.0 was verified with Claude Code 2.1.302 to 2.1.304 and Codex CLI
+0.163.0, each in every role, and a reviewer on Z.AI's endpoint. See
+[docs/compatibility.md](/docs/compatibility/).
 
 ## What you need
 
@@ -74,8 +83,8 @@ your tasks and configuration.
 
 ## Example: Fable plans and judges, Opus implements and reviews
 
-`~/.config/bottega-kit/config.json`, which `bottega init` writes when it finds
-`claude`:
+`~/.config/bottega-kit/config.json`, which `bottega init` writes when `claude`
+is on PATH:
 
 ```json
 {
@@ -91,6 +100,12 @@ your tasks and configuration.
 }
 ```
 
+With `codex` on PATH as well, `init` also writes a `sol-builder` profile
+(`codex`, `gpt-5.6-sol`, effort `high`) and binds it to no role. With `codex`
+alone, `sol-builder` is the planner, the implementer and the reviewer, and
+there is no judge. Edit the file to bind the roles as you like; `bottega
+doctor` checks it.
+
 The whole sequence, from a repository with an `origin` on GitHub:
 
 ```sh
@@ -103,6 +118,7 @@ bottega plan 20261017-0930-add-a-dry-run-flag     # a unique prefix or suffix is
 # read task.md; answer any questions in it and run plan again
 bottega approve dry-run-flag
 bottega run dry-run-flag
+# read the changes in the worktree; bottega show dry-run-flag prints where it is
 bottega pr dry-run-flag
 ```
 
@@ -119,6 +135,47 @@ planner's questions when it has any; everything else goes to stderr:
 ```
 
 `pr` prints the pull request's URL, or `pr exists: <url>`.
+[docs/process.md](/docs/process/#a-task-end-to-end) follows one task
+through every command, with the `task.md` it ends with.
+
+## After `run`
+
+`bottega show <task>` prints the worktree, the branch and the path of
+`task.md`, then the phase, the round, the last signal, why the task stopped,
+and one line per dispatch. `bottega list` prints every task and its phase.
+
+**Done** (exit 0). Read the work before you open the pull request. The
+changes are in the worktree, uncommitted: `git status` and `git diff` there,
+and new files are untracked until `pr` commits them. `task.md` holds the
+reviewer's `## Review Findings` and the judge's `## Verdict`. Then
+`bottega pr`.
+
+**Stopped** (exit 3). `run` prints the reason, the receipt of the dispatch
+that stopped it and the resume command; `show` prints them again. Then one
+of:
+
+- `bottega resume <task>`: the same plan, a fresh cap. After `cap-reached` or
+  `judge-needs-work` a new round starts with the implementer; after any other
+  stop the role that stopped runs again.
+- Edit the plan in `task.md`, `bottega approve` it again and `bottega run`:
+  the ids are kept and the loop starts over at round 1. After `blocked`, the
+  reviewer's findings say what is missing.
+- `bottega pr` anyway: the pull request's body starts with the stop reason.
+- `bottega rm <task>`: removes the worktree and the branch. The task
+  directory and its receipts stay.
+
+## What a task costs
+
+You pay your providers; bottega-kit adds nothing. Each Claude Code dispatch's
+cost, as Claude Code reports it, is `cost_usd` in its `run.json`. Codex
+reports none: its usage goes to your ChatGPT plan. For scale, on 2026-10-23
+the starter configuration above added an option to a 21-line Python CLI in
+one round: four dispatches, 2.07 USD and under five minutes, three quarters
+of it the Fable planner and judge. In the 0.1.0 runs, Sonnet at effort
+`medium` cost 0.03 to 0.08 USD a dispatch on the same kind of task. A larger
+task costs more: more files to read, more rounds.
+[docs/compatibility.md](/docs/compatibility/) lists every dispatch of the
+live runs.
 
 ## Example: three vendors, no judge
 
@@ -193,8 +250,9 @@ A stopped task continues with `bottega resume <task> [--rounds N]`.
 ## What bottega-kit never does
 
 - Retry a failed dispatch, fall back to another model, or substitute a profile.
-- Bring a model of its own. Every dispatch runs a profile you bound, and the
-  harness must report the model you asked for.
+- Bring a model of its own. Every dispatch runs a profile you bound. Claude
+  Code reports the model it ran, and it must be the one you asked for; Codex
+  reports none, so its receipts say `requested-only` and rest on the request.
 - Put a secret in its configuration, its prompts, a task or a receipt.
   Profiles name environment variables; the key file you keep at mode 600 may
   hold their values; receipts record names, never values.

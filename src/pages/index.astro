@@ -39,8 +39,12 @@ ${Object.entries(kit.starter.profiles)
 // One argv per harness, as HARNESS_MATRIX has it, with shell quoting for the
 // arguments that need it.
 const quote = (arg: string) => (/^[A-Za-z0-9_@%+=:,./<>-]+$/.test(arg) ? arg : `'${arg}'`);
-const argv = (harness: 'claude' | 'codex', role: 'implementer' | 'reviewer') =>
+type Harness = keyof typeof kit.matrix;
+const argv = (harness: Harness, role: 'implementer' | 'reviewer') =>
   kit.matrix[harness][role].map(quote).join(' ');
+// The harnesses the kit ships, in its order, each with its copy.json text.
+const harnesses = kit.harnesses as Harness[];
+const harnessText = copy.harnesses as Record<string, string>;
 
 // The README's run, as the terminal shows it: `plan`, `approve`, `run`, `pr`,
 // or only `run` and `pr` when the copy asks for the short form.
@@ -371,23 +375,19 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
           <h2 class={h2}><Inline text={t(copy.harnesses.h2)} /></h2>
           <p class={`${lead} mb-12`}><Inline text={t(copy.harnesses.lead)} /></p>
           <div class="grid gap-10 lg:grid-cols-2">
-            <div class="min-w-0">
-              <h3 class="font-mono text-[1.2rem] mb-3">claude</h3>
-              <p class={`${soft} mb-5`}>
-                <Inline text={t(copy.harnesses.claude)} />
-                Effort <span class="font-mono text-[0.85em]">{kit.efforts.claude.join(' · ')}</span
-                >.
-              </p>
-              <CodeBlock label="implementer" wrap code={argv('claude', 'implementer')} />
-            </div>
-            <div class="min-w-0">
-              <h3 class="font-mono text-[1.2rem] mb-3">codex</h3>
-              <p class={`${soft} mb-5`}>
-                <Inline text={t(copy.harnesses.codex)} />
-                Effort <span class="font-mono text-[0.85em]">{kit.efforts.codex.join(' · ')}</span>.
-              </p>
-              <CodeBlock label="implementer" wrap code={argv('codex', 'implementer')} />
-            </div>
+            {
+              harnesses.map((harness) => (
+                <div class="min-w-0">
+                  <h3 class="font-mono text-[1.2rem] mb-3">{harness}</h3>
+                  <p class={`${soft} mb-5`}>
+                    <Inline text={t(harnessText[harness])} />
+                    Effort{' '}
+                    <span class="font-mono text-[0.85em]">{kit.efforts[harness].join(' · ')}</span>.
+                  </p>
+                  <CodeBlock label="implementer" wrap code={argv(harness, 'implementer')} />
+                </div>
+              ))
+            }
           </div>
           <p class={`mt-12 ${soft} max-w-2xl`}>
             <Inline text={t(copy.harnesses.after)} />

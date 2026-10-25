@@ -1,10 +1,10 @@
 {
   "meta": {
     "title": "bottega-kit: you approve the plan, the agents do the rounds",
-    "description": "Planner, implementer, reviewer and optional judge on Claude Code and Codex. A receipt per dispatch."
+    "description": "Planner, implementer, reviewer and optional judge on Claude Code, Codex, Kimi Code, Grok Build, Muse Code or the Antigravity CLI. A receipt per dispatch."
   },
   "hero": {
-    "eyebrow": "Local coding-agent loop · Claude Code + Codex",
+    "eyebrow": "Local coding-agent loop · six harnesses",
     "h1": [
       "You approve the plan.",
       "The agents do *the rounds.*"
@@ -129,16 +129,20 @@
       }
     ],
     "bindH3": "Bind each role to a profile.",
-    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds both CLIs. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
+    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds `claude` and `codex`. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
     "bindLink": "Every setting →"
   },
   "harnesses": {
-    "h2": "Two harnesses, the narrowest permissions each offers.",
+    "h2": "Six harnesses, the narrowest permissions each offers.",
     "lead": "Every flag in one table, pinned by a test. Shown: the implementer's command.",
     "claude": "Claude Code, headless. Read tools only for the planner; `git push` and `gh` denied to the implementer and reviewer.",
     "codex": "Codex CLI, `exec`. Read-only sandbox for the planner, workspace-write for the rest; network blocked by default. No model is reported, so the receipt says requested-only.",
+    "kimi": "Kimi Code, `-p`. An agent file gives each role its tools; `git push` to origin and `gh` fail through the environment. No model is reported, so the receipt says requested-only and keeps the tokens from the session log.",
     "after": "Before each release a live run replaces the verified snapshot.",
-    "afterLink": "What was verified for {version} →"
+    "afterLink": "What was verified for {version} →",
+    "grok": "Grok Build, headless. Each role gets its tool list and allow and deny rules; Claude Code's and Cursor's configuration stays out. The model is reported and checked, the cost recorded.",
+    "muse": "Muse Code, `exec`. No writes or shell for the planner, no writes for the reviewer and judge; contributor mode off for every dispatch. The models Muse Code names are checked.",
+    "agy": "Antigravity CLI, `-p`. Each dispatch runs with a temporary HOME holding the role's permission rules and a link to your sign-in; your own settings, hooks and MCP servers stay out. No model is reported, so the receipt says requested-only."
   },
   "receipt": {
     "h2": "What every dispatch leaves behind.",
@@ -172,7 +176,7 @@
   },
   "install": {
     "h2": "One command. Then *bottega new.*",
-    "text": "You need git, gh, python3 3.9 or newer, and `claude` or `codex`, logged in. bottega-kit never handles their credentials. `init` writes a starter; `doctor` checks it.",
+    "text": "You need git, gh, python3 3.9 or newer, and one of `claude`, `codex`, `kimi`, `grok`, `muse` or `agy`, logged in. bottega-kit never handles their credentials. `init` writes a starter; `doctor` checks it.",
     "cta": "Get started →",
     "cta2": "The process",
     "cta3": "Changelog"

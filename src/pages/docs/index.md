@@ -11,10 +11,11 @@ path: '/docs'
 
 # bottega-kit
 
-bottega-kit runs a planner, an implementer, a reviewer and an optional judge on the
-coding agents you already have — Claude Code and Codex today — one role each, in a
-git worktree, with a receipt for every step. You need git, gh, python3 and at least
-one of those CLIs.
+bottega-kit runs a planner, an implementer, a reviewer and an optional judge
+on the coding agents you already have — Claude Code, Codex, Kimi Code, Grok
+Build, Muse Code and the Antigravity CLI today — one role each, in a git
+worktree, with a receipt for every step. You need git, gh, python3 and at
+least one of those CLIs.
 
 Why roles: the agent that reviews the code is not the one that wrote it, and
 it can run on another model or another vendor. You read and approve the plan
@@ -39,18 +40,19 @@ bottega resume   after a stop, with a fresh cap
 
 A round is one implementer pass and one reviewer pass; the cap is 3 unless
 you change it. Each role runs under a profile from your configuration: a
-harness, which is the CLI that runs the role (`claude` or `codex`), a model
-and an effort. One profile may serve several roles.
+harness, which is the CLI that runs the role (`claude`, `codex`, `kimi`,
+`grok`, `muse` or `agy`), a model and an effort. One profile may serve
+several roles.
 
-## Current release: 0.1.1
+## Current release: 0.2.0
 
-Documentation: what to do after `run`, a task followed end to end, what a
-task costs. The commands are those of 0.1.0: `init`, `doctor`, `new`,
-`plan`, `approve`, `run`, `resume`, `pr` and the task commands, on the
-`claude` and `codex` harnesses. 0.1.1 was verified live on 2026-10-23 with
-Claude Code 2.1.309 and the starter configuration, through `bottega pr` on
-GitHub; 0.1.0 was verified with Claude Code 2.1.302 to 2.1.304 and Codex CLI
-0.163.0, each in every role, and a reviewer on Z.AI's endpoint. See
+Four new harnesses: `kimi` (Kimi Code), `grok` (Grok Build), `muse` (Muse
+Code) and `agy` (the Antigravity CLI), next to `claude` and `codex`; the
+commands are those of 0.1.0. 0.2.0 was verified live on 2026-10-25 with one
+task through `bottega pr` on GitHub: Grok Build 1.0.62 as planner and
+judge, Muse Code 1.4.13 as implementer, the Antigravity CLI 1.4.7 as
+reviewer. Kimi Code 2.3.1 ran every role on 2026-10-23; Claude Code was last
+verified with 2.1.309 for 0.1.1, Codex CLI with 0.163.0 for 0.1.0. See
 [docs/compatibility.md](/docs/compatibility/).
 
 ## What you need
@@ -58,7 +60,9 @@ GitHub; 0.1.0 was verified with Claude Code 2.1.302 to 2.1.304 and Codex CLI
 - git
 - gh, logged in, for `bottega pr`
 - python3 3.9 or newer
-- at least one of `claude` (Claude Code) and `codex` (Codex CLI), logged in
+- at least one of `claude` (Claude Code), `codex` (Codex CLI), `kimi`
+  (Kimi Code), `grok` (Grok Build), `muse` (Muse Code) and `agy` (the
+  Antigravity CLI), logged in
 - node 18 or newer, only for `npx bottega-kit`
 
 ## Install
@@ -103,7 +107,12 @@ is on PATH:
 With `codex` on PATH as well, `init` also writes a `sol-builder` profile
 (`codex`, `gpt-5.6-sol`, effort `high`) and binds it to no role. With `codex`
 alone, `sol-builder` is the planner, the implementer and the reviewer, and
-there is no judge. Edit the file to bind the roles as you like; `bottega
+there is no judge. With `kimi` on PATH, `init` writes a `kimi` profile
+(`kimi-code/k3.1-pro`, effort `high`) the same way: bound to the planner,
+the implementer and the reviewer when `kimi` is the only CLI it finds, to no
+role otherwise. `grok`, `muse` and `agy` add a `grok` (`grok-4.7`), a `muse`
+(`muse-wonder-1.0`) and a `gemini` (`gemini-3.8-flash-high`) profile, all
+at effort `high`, the same way. Edit the file to bind the roles as you like; `bottega
 doctor` checks it.
 
 The whole sequence, from a repository with an `origin` on GitHub:
@@ -168,11 +177,20 @@ of:
 
 You pay your providers; bottega-kit adds nothing. Each Claude Code dispatch's
 cost, as Claude Code reports it, is `cost_usd` in its `run.json`. Codex
-reports none: its usage goes to your ChatGPT plan. For scale, on 2026-10-23
-the starter configuration above added an option to a 21-line Python CLI in
-one round: four dispatches, 2.07 USD and under five minutes, three quarters
-of it the Fable planner and judge. In the 0.1.0 runs, Sonnet at effort
-`medium` cost 0.03 to 0.08 USD a dispatch on the same kind of task. A larger
+reports none: its usage goes to your ChatGPT plan. Kimi Code reports no cost
+either: its usage goes to your Kimi Code plan, and `run.json` keeps the
+tokens from Kimi Code's session log. Grok Build reports a cost, kept in
+`cost_usd`; Muse Code and the Antigravity CLI report tokens only. For
+scale, on 2026-10-23 the starter configuration above added an option to a
+21-line Python CLI in one round: four dispatches, 2.07 USD and under five
+minutes, three quarters of it the Fable planner and judge. On 2026-10-24
+the same task took 0.27 USD on Grok Build, as it reported it, and would
+have taken about 0.86 USD on Muse Code and 0.50 USD on the Antigravity CLI
+at API list prices (both bill a subscription). On 2026-10-25 the 0.2.0 run,
+with the planner and judge on Grok Build, the implementer on Muse Code and
+the reviewer on the Antigravity CLI, took 0.086 USD as Grok Build reported
+it, about 0.80 USD at list prices. In the 0.1.0 runs, Sonnet at
+effort `medium` cost 0.03 to 0.08 USD a dispatch on the same kind of task. A larger
 task costs more: more files to read, more rounds.
 [docs/compatibility.md](/docs/compatibility/) lists every dispatch of the
 live runs.
@@ -209,6 +227,31 @@ Claude configuration directory and without your Anthropic credentials.
 name stops the run as `identity-mismatch` (on 2026-10-20 Z.AI reported
 `glm-5.3-flash`, the requested name, so the alias went unused). To change one
 role for one task only, pass `--role implementer=sol-builder` to `bottega new`.
+
+MiniMax and Kimi run the same way, each through its own Anthropic-compatible
+endpoint. Both ran planner, implementer and reviewer live on 2026-10-23:
+
+```json
+"minimax": {"harness": "claude", "model": "MiniMax-M3.1-Flash", "effort": "high",
+            "env": {"ANTHROPIC_BASE_URL": "https://api.minimax.io/anthropic",
+                    "ANTHROPIC_AUTH_TOKEN": "${MINIMAX_API_KEY}",
+                    "ANTHROPIC_DEFAULT_OPUS_MODEL": "MiniMax-M3.1-Flash",
+                    "ANTHROPIC_DEFAULT_SONNET_MODEL": "MiniMax-M3.1-Flash",
+                    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "MiniMax-M3.1-Flash"}},
+"kimi-k3": {"harness": "claude", "model": "kimi-k3", "effort": "high",
+            "env": {"ANTHROPIC_BASE_URL": "https://api.moonshot.ai/anthropic",
+                    "ANTHROPIC_AUTH_TOKEN": "${KIMI_API_KEY}",
+                    "ANTHROPIC_DEFAULT_OPUS_MODEL": "kimi-k3",
+                    "ANTHROPIC_DEFAULT_SONNET_MODEL": "kimi-k3",
+                    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "kimi-k3"}}
+```
+
+The Kimi key is a Kimi Platform API key, not the login of the `kimi` CLI.
+Since 2026-10-25 `GET /v1/models` lists `kimi-k3.1-pro` too; it has not run
+through the Anthropic endpoint yet (on 2026-10-23 it answered 404 there). To
+try it, change `model` and the three `ANTHROPIC_DEFAULT_*` values. With a Kimi Code login,
+the `kimi` harness runs K3.1 Pro without a key (the `kimi` profile `init`
+writes). See [docs/configuration.md](/docs/configuration/).
 
 ## The roles
 
@@ -251,8 +294,9 @@ A stopped task continues with `bottega resume <task> [--rounds N]`.
 
 - Retry a failed dispatch, fall back to another model, or substitute a profile.
 - Bring a model of its own. Every dispatch runs a profile you bound. Claude
-  Code reports the model it ran, and it must be the one you asked for; Codex
-  reports none, so its receipts say `requested-only` and rest on the request.
+  Code, Grok Build and Muse Code report the model they ran, and it must be
+  the one you asked for; Codex, Kimi Code and the Antigravity CLI report
+  none, so their receipts say `requested-only` and rest on the request.
 - Put a secret in its configuration, its prompts, a task or a receipt.
   Profiles name environment variables; the key file you keep at mode 600 may
   hold their values; receipts record names, never values.

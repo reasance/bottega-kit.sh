@@ -120,8 +120,8 @@ if (head[1] !== pkg.version) fail(`CHANGELOG head ${head[1]} != package.json ${p
 // ---- the kit's own tables, through python3 ------------------------------------
 // An import of the kit's modules (standard library only), isolated from the
 // user's site-packages and PYTHONPATH. The placeholders of the harness matrix
-// are rendered as <model>, <effort> and so on; the prompt kimi takes as an
-// argument as <prompt.md>, as its receipts record it.
+// are rendered as <model>, <effort> and so on; the prompt kimi and agy take
+// as an argument as <prompt.md>, as their receipts record it.
 const PY = `
 import json, sys
 sys.path.insert(0, sys.argv[1])
@@ -135,7 +135,7 @@ matrix = {h: {r: matrix_argv(h, r, values) for r in HARNESS_MATRIX[h]["roles"]}
           for h in sorted(HARNESS_MATRIX)}
 print(json.dumps({
     "version": __version__,
-    "harnesses": sorted(HARNESS_MATRIX),
+    "harnesses": list(HARNESS_MATRIX),
     "binaries": config.HARNESS_BINARIES,
     "efforts": config.HARNESS_EFFORTS,
     "roles": list(config.ROLES),

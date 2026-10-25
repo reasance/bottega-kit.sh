@@ -15,6 +15,56 @@ GitHub Release. -->
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-10-25
+
+Four new harnesses: Kimi Code, Grok Build, Muse Code and the Antigravity
+CLI, next to Claude Code and Codex.
+
+**Documentation.** MiniMax M3.1 Flash and Kimi K3 as proxied `claude`
+profiles: README examples, a table of the Anthropic-compatible endpoints
+that have run live in `docs/configuration.md`, and the two live runs of
+2026-10-23 in `docs/compatibility.md`.
+
+**A third harness: Kimi Code.** `"harness": "kimi"` runs a role with
+`kimi -p` on your own Kimi Code login, for instance
+`kimi-code/k3.1-pro`; effort `low`, `high` or `max`. Each dispatch writes an
+agent file whose `tools:` list is the role's tool set, replaces your skills
+with an empty directory, sets the effort through
+`KIMI_MODEL_THINKING_EFFORT`, and makes `git push` to origin and `gh` fail
+through the environment, since Kimi Code has no deny rule for a shell
+command. Kimi Code reports no model, so its receipts say `requested-only`;
+they record the requested model, the effort and the tokens from Kimi Code's
+session log. `bottega init` adds a `kimi` profile when it finds `kimi`.
+Verified live on 2026-10-23 with Kimi Code 2.3.1 and K3.1 Pro in every role.
+
+**Three more harnesses: Grok Build, Muse Code and the Antigravity CLI.**
+
+- `"harness": "grok"` runs a role with `grok` on your Grok login, for
+  instance `grok-4.7`; effort `low` to `xhigh`. Each role gets its tool set
+  and Claude Code-style allow and deny rules; Claude Code's and Cursor's
+  configuration, which Grok Build otherwise loads, is switched off. The
+  model is reported and checked, and the cost recorded.
+- `"harness": "muse"` runs a role with `muse exec`, for instance
+  `muse-wonder-1.0`; effort `none` to `ultra`. The planner runs without
+  writes or shell, the reviewer and judge without writes; contributor mode
+  is off for every dispatch, whatever your setting. The models Muse Code
+  names are checked.
+- `"harness": "agy"` runs a role with the Antigravity CLI, for instance
+  `gemini-3.8-flash-high`; effort `low` to `max`. Each dispatch runs with a
+  temporary HOME whose settings hold the role's permission rules, and a
+  link to your `agy` sign-in; your own settings, hooks, plugins and MCP
+  servers stay out. Receipts say `requested-only`.
+- For all three, `git push` to origin and `gh` fail through the
+  environment, as for `kimi`. `bottega init` adds a `grok`, `muse` or
+  `gemini` profile for each CLI it finds.
+
+**Verification.** `docs/compatibility.md` has a new verified snapshot: one
+live task on 2026-10-25 with Grok Build as planner and judge, Muse Code as
+implementer and the Antigravity CLI as reviewer, done in round 1, then
+`bottega pr` on GitHub. The 0.1.1 snapshot is kept below it, marked as not
+re-run. Kimi Code's run of 2026-10-23 and the Grok, Muse and Antigravity
+runs of 2026-10-24 are kept beside it, dated.
+
 ## [0.1.1] — 2026-10-23
 
 Documentation only; the commands behave as in 0.1.0.

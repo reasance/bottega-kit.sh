@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "harnesses": [
     "claude",
     "codex",
@@ -25,13 +25,12 @@
       "max"
     ],
     "codex": [
-      "none",
-      "minimal",
       "low",
       "medium",
       "high",
       "xhigh",
-      "max"
+      "max",
+      "ultra"
     ],
     "kimi": [
       "low",
@@ -52,7 +51,6 @@
       "max"
     ],
     "muse": [
-      "none",
       "minimal",
       "low",
       "medium",
@@ -119,7 +117,7 @@
       },
       "sol-builder": {
         "harness": "codex",
-        "model": "gpt-5.6-sol",
+        "model": "gpt-6.1-sol",
         "effort": "high"
       }
     },

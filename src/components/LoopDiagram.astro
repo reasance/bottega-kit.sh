@@ -2,6 +2,12 @@
 // The loop, as a drawing: the commands you run, the roles they dispatch, the
 // signals that decide what comes next. The rules next to it are the
 // accessible text; the drawing is described by its title and desc.
+//
+// Motion (src/scripts/motion.ts): `data-k` is how an element arrives (down,
+// up, pop, fade, draw) and `data-at` when, in seconds after the drawing
+// scrolls into view. After that a pulse walks the edges named by `data-e`
+// and lights the boxes named by `data-node`. Without JavaScript, or with
+// reduced motion, the drawing is simply there.
 import kit from '../data/kit.json';
 ---
 
@@ -11,6 +17,7 @@ import kit from '../data/kit.json';
   role="img"
   aria-labelledby="loop-title loop-desc"
   xmlns="http://www.w3.org/2000/svg"
+  data-loop
 >
   <title id="loop-title">How a task runs</title>
   <desc id="loop-desc">
@@ -34,86 +41,173 @@ import kit from '../data/kit.json';
 
   <!-- the commands, above -->
   <g class="sm soft">
-    <text x="55" y="38" class="mid">bottega new</text>
-    <text x="158" y="38" class="mid">bottega plan</text>
-    <text x="295" y="38" class="mid">bottega approve</text>
-    <text x="550" y="38" class="mid">bottega run</text>
-    <text x="900" y="38" class="mid">bottega pr</text>
+    <text x="55" y="38" class="mid" data-k="down" data-at="0">bottega new</text>
+    <text x="158" y="38" class="mid" data-k="down" data-at="0.05">bottega plan</text>
+    <text x="295" y="38" class="mid" data-k="down" data-at="0.1">bottega approve</text>
+    <text x="550" y="38" class="mid" data-k="down" data-at="0.15">bottega run</text>
+    <text x="900" y="38" class="mid" data-k="down" data-at="0.2">bottega pr</text>
   </g>
-  <line x1="405" y1="44" x2="805" y2="44" class="path faint"></line>
+  <line x1="405" y1="44" x2="805" y2="44" class="path faint" data-k="fade" data-at="0.3"></line>
 
   <!-- boxes -->
-  <rect x="20" y="60" width="70" height="44" class="box"></rect>
-  <text x="55" y="87" class="mid ttl">new</text>
-
-  <rect x="118" y="60" width="80" height="44" class="box"></rect>
-  <text x="158" y="87" class="mid ttl">planner</text>
-
-  <rect x="250" y="60" width="90" height="44" class="you"></rect>
-  <text x="295" y="87" class="mid ttl you-t">you</text>
-
-  <rect x="400" y="60" width="130" height="44" class="box"></rect>
-  <text x="465" y="87" class="mid ttl">implementer</text>
-
-  <rect x="575" y="60" width="110" height="44" class="box"></rect>
-  <text x="630" y="87" class="mid ttl">reviewer</text>
-
-  <rect x="730" y="60" width="80" height="44" class="box"></rect>
-  <text x="770" y="87" class="mid ttl">judge</text>
-
-  <rect x="855" y="60" width="90" height="44" class="you"></rect>
-  <text x="900" y="87" class="mid ttl you-t">pr</text>
+  <g data-k="pop" data-at="0.15" data-node="new">
+    <rect x="20" y="60" width="70" height="44" class="box"></rect>
+    <text x="55" y="87" class="mid ttl">new</text>
+  </g>
+  <g data-k="pop" data-at="0.24" data-node="planner">
+    <rect x="118" y="60" width="80" height="44" class="box"></rect>
+    <text x="158" y="87" class="mid ttl">planner</text>
+  </g>
+  <g data-k="pop" data-at="0.33" data-node="you">
+    <rect x="250" y="60" width="90" height="44" class="you"></rect>
+    <text x="295" y="87" class="mid ttl you-t">you</text>
+  </g>
+  <g data-k="pop" data-at="0.42" data-node="impl">
+    <rect x="400" y="60" width="130" height="44" class="box"></rect>
+    <text x="465" y="87" class="mid ttl">implementer</text>
+  </g>
+  <g data-k="pop" data-at="0.51" data-node="rev">
+    <rect x="575" y="60" width="110" height="44" class="box"></rect>
+    <text x="630" y="87" class="mid ttl">reviewer</text>
+  </g>
+  <g data-k="pop" data-at="0.6" data-node="judge">
+    <rect x="730" y="60" width="80" height="44" class="box"></rect>
+    <text x="770" y="87" class="mid ttl">judge</text>
+  </g>
+  <g data-k="pop" data-at="0.69" data-node="pr">
+    <rect x="855" y="60" width="90" height="44" class="you"></rect>
+    <text x="900" y="87" class="mid ttl you-t">pr</text>
+  </g>
 
   <!-- the straight path -->
   <g style="color: var(--color-cream-soft)">
-    <line x1="90" y1="82" x2="116" y2="82" class="path" marker-end="url(#ah)"></line>
-    <line x1="198" y1="82" x2="248" y2="82" class="path" marker-end="url(#ah)"></line>
-    <line x1="340" y1="82" x2="398" y2="82" class="path" marker-end="url(#ah)"></line>
-    <line x1="530" y1="82" x2="573" y2="82" class="path" marker-end="url(#ah)"></line>
+    <line
+      x1="90"
+      y1="82"
+      x2="116"
+      y2="82"
+      class="path"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.45"
+      data-e="new-planner"></line>
+    <line
+      x1="198"
+      y1="82"
+      x2="248"
+      y2="82"
+      class="path"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.55"
+      data-e="planner-you"></line>
+    <line
+      x1="340"
+      y1="82"
+      x2="398"
+      y2="82"
+      class="path"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.65"
+      data-e="you-impl"></line>
+    <line
+      x1="530"
+      y1="82"
+      x2="573"
+      y2="82"
+      class="path"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.75"
+      data-e="impl-rev"></line>
   </g>
   <g style="color: var(--color-ready)">
-    <line x1="685" y1="82" x2="728" y2="82" class="go" marker-end="url(#ah)"></line>
-    <line x1="810" y1="82" x2="853" y2="82" class="go" marker-end="url(#ah)"></line>
+    <line
+      x1="685"
+      y1="82"
+      x2="728"
+      y2="82"
+      class="go"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.85"
+      data-e="rev-judge"></line>
+    <line
+      x1="810"
+      y1="82"
+      x2="853"
+      y2="82"
+      class="go"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.95"
+      data-e="judge-pr"></line>
   </g>
-  <text x="707" y="72" class="mid sm ok">ready</text>
-  <text x="831" y="72" class="mid sm ok">ready</text>
+  <text x="707" y="72" class="mid sm ok" data-k="up" data-at="1.05">ready</text>
+  <text x="831" y="72" class="mid sm ok" data-k="up" data-at="1.15">ready</text>
 
   <!-- questions: plan again -->
   <g style="color: var(--color-line-strong)">
-    <path d="M143 60 C143 30, 173 30, 173 60" class="path faint" marker-end="url(#ah)"></path>
+    <path
+      d="M146 60 C146 46, 170 46, 170 60"
+      class="path faint"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="0.9"
+      data-e="ask"
+      data-pulse="var(--color-cream-soft)"></path>
   </g>
-  <text x="158" y="122" class="mid sm soft">questions? answer,</text>
-  <text x="158" y="136" class="mid sm soft">then plan again</text>
+  <g data-k="up" data-at="1.05">
+    <text x="158" y="122" class="mid sm soft">questions? answer,</text>
+    <text x="158" y="136" class="mid sm soft">then plan again</text>
+  </g>
 
   <!-- the human gate -->
-  <text x="295" y="122" class="mid sm you-t">frozen: plan hash,</text>
-  <text x="295" y="136" class="mid sm you-t">roles, round cap</text>
+  <g data-k="up" data-at="1.1">
+    <text x="295" y="122" class="mid sm you-t">frozen: plan hash,</text>
+    <text x="295" y="136" class="mid sm you-t">roles, round cap</text>
+  </g>
 
   <!-- needs-work: the next round -->
   <g style="color: var(--color-work)">
-    <path d="M630 104 L630 150 L518 150 L518 106" class="loop" marker-end="url(#ah)"></path>
+    <path
+      d="M630 104 L630 150 L518 150 L518 106"
+      class="loop"
+      marker-end="url(#ah)"
+      data-k="draw"
+      data-at="1.25"
+      data-e="work"></path>
   </g>
-  <text x="400" y="166" class="mid sm warn"
+  <text x="400" y="166" class="mid sm warn" data-k="up" data-at="1.6"
     >needs-work · the next round, up to the cap ({kit.defaultRounds} by default)</text
   >
 
   <!-- blocked / cap reached / judge needs-work: stops -->
   <g style="color: var(--color-blocked)">
-    <path d="M655 104 L655 196" class="stop" marker-end="url(#ah)"></path>
-    <path d="M785 104 L785 196" class="stop" marker-end="url(#ah)"></path>
+    <path d="M655 104 L655 196" class="stop" marker-end="url(#ah)" data-k="fade" data-at="1.6"
+    ></path>
+    <path d="M785 104 L785 196" class="stop" marker-end="url(#ah)" data-k="fade" data-at="1.7"
+    ></path>
   </g>
-  <text x="655" y="214" class="mid sm err">blocked · cap-reached</text>
-  <text x="785" y="214" class="mid sm err">needs-work</text>
-  <text x="720" y="232" class="mid sm soft"
+  <text x="655" y="214" class="mid sm err" data-k="up" data-at="1.8">blocked · cap-reached</text>
+  <text x="785" y="214" class="mid sm err" data-k="up" data-at="1.85">needs-work</text>
+  <text x="720" y="232" class="mid sm soft" data-k="up" data-at="1.95"
     >stopped, exit {kit.exitCodes.stopped} · bottega resume</text
   >
 
   <!-- what each writes -->
-  <text x="55" y="122" class="mid sm soft">task.md,</text>
-  <text x="55" y="136" class="mid sm soft">worktree,</text>
-  <text x="55" y="150" class="mid sm soft">branch</text>
-  <text x="450" y="122" class="mid sm soft">edits the worktree</text>
-  <text x="450" y="136" class="mid sm soft">and ticks items</text>
-  <text x="900" y="122" class="mid sm soft">commit, push,</text>
-  <text x="900" y="136" class="mid sm soft">gh pr create</text>
+  <g data-k="up" data-at="1">
+    <text x="55" y="122" class="mid sm soft">task.md,</text>
+    <text x="55" y="136" class="mid sm soft">worktree,</text>
+    <text x="55" y="150" class="mid sm soft">branch</text>
+  </g>
+  <g data-k="up" data-at="1.15">
+    <text x="450" y="122" class="mid sm soft">edits the worktree</text>
+    <text x="450" y="136" class="mid sm soft">and ticks items</text>
+  </g>
+  <g data-k="up" data-at="1.2">
+    <text x="900" y="122" class="mid sm soft">commit, push,</text>
+    <text x="900" y="136" class="mid sm soft">gh pr create</text>
+  </g>
 </svg>

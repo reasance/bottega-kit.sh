@@ -6,22 +6,24 @@ interface Props {
   label?: string;
   /** Wrap long lines (an argv) instead of scrolling. */
   wrap?: boolean;
+  /** Type the lines in when the block scrolls into view (src/scripts/motion.ts). */
+  typing?: boolean;
 }
-const { code, lang = 'sh', label, wrap = false } = Astro.props;
+const { code, lang = 'sh', label, wrap = false, typing = false } = Astro.props;
 // `cb-wrap` is the layout hook prose.css uses for vertical rhythm.
 ---
 
 <div class="cb-wrap min-w-0">
   {
     /* Mono like an eyebrow, but not uppercased: labels can hold a file path. */
-    label && <p class="mb-2 font-mono text-[0.75rem] text-[var(--color-cream-soft)]">{label}</p>
+    label && <p class="cb-label mb-2 font-mono text-[0.75rem]">{label}</p>
   }
-  <div class="relative group">
+  <div class="relative group" data-typing={typing ? '' : undefined}>
     <pre
       class:list={[
         'bg-[var(--color-coal-deep)] text-[var(--color-cream)] border border-[var(--color-line)] px-4 py-3.5 overflow-x-auto text-[0.84rem] leading-relaxed w-full',
         wrap && 'whitespace-pre-wrap [overflow-wrap:anywhere]'
-      ]}><code data-lang={lang}>{code}</code></pre>
+      ]}><code data-lang={lang}>{typing ? code.split('\n').map((l) => <span class="ty-line block"><span class="ty-tx">{l}</span></span>) : code}</code></pre>
     <button
       type="button"
       class="absolute top-2 right-2 text-[0.7rem] px-2 py-1 bg-[var(--color-coal)] text-[var(--color-cream-soft)] border border-[var(--color-line-strong)] font-mono opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity hover:text-[var(--color-cream)]"
@@ -47,8 +49,7 @@ const { code, lang = 'sh', label, wrap = false } = Astro.props;
 </style>
 
 <script>
-  // One delegated listener for every CodeBlock on the page. The only runtime
-  // JavaScript the site ships.
+  // One delegated listener for every CodeBlock on the page.
   document.addEventListener('click', async (event) => {
     const target = event.target as HTMLElement | null;
     const btn = target?.closest<HTMLButtonElement>('button[data-copy]');

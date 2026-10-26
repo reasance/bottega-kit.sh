@@ -3,6 +3,10 @@
 // Prompts are `$ ` lines in the human-gate colour; a dispatch line is the
 // one line `plan` and `run` print, its result coloured as the signal is;
 // any other line is printed as it is.
+//
+// Motion (src/scripts/motion.ts): the lines rise in on load, then the run
+// replays: commands are typed, each dispatch works and lands on its result.
+// The text in the DOM never changes; the replay only reveals it.
 export interface Dispatch {
   seq: string;
   role: string;
@@ -26,24 +30,28 @@ const tone = (result: string) =>
         ? 'text-[var(--color-blocked)]'
         : 'text-[var(--color-cream)]';
 const soft = 'text-[var(--color-cream-soft)]';
+// Where a phone wraps a line: between words, never at a model name's hyphens.
+const words = (text: string) => text.split(/( +)/).filter(Boolean);
+// The load-in stagger, after the hero's text.
+const d = (i: number) => `--d:${(0.55 + i * 0.035).toFixed(3)}s`;
 ---
 
-<figure class="min-w-0">
+<figure class="min-w-0" data-transcript>
   <pre
-    class="bg-[var(--color-coal-deep)] border border-[var(--color-line-strong)] text-[var(--color-cream)] px-5 py-4 overflow-x-auto text-[0.84rem] leading-[1.7] w-full"><code>{lines.map((l) => (
+    class="tr-pre bg-[var(--color-coal-deep)] border border-[var(--color-line-strong)] text-[var(--color-cream)] px-5 py-4 overflow-x-auto text-[0.84rem] leading-[1.7] w-full"><code>{lines.map((l, i) => (
       'cmd' in l ? (
-        <span class="block"><span class="text-[var(--color-you)]">$</span> {l.cmd}</span>
+        <span class="tr-line rise block" data-ln="cmd" style={d(i)}><span class="text-[var(--color-you)]">$</span> <span class="tr-cmd">{l.cmd}</span></span>
       ) : 'dispatch' in l ? (
-        <span class="block"><span class={soft}>{l.dispatch.seq}</span> {l.dispatch.role.padEnd(11)} {l.dispatch.profile.padEnd(13)} <span class={soft}>{l.dispatch.model.padEnd(17)}</span>→ <span class={tone(l.dispatch.result)}>{l.dispatch.result}</span> <span class={soft}>({l.dispatch.time})</span></span>
+        <span class="tr-line rise block" data-ln="dispatch" style={d(i)}><span class={soft}>{l.dispatch.seq}</span> {l.dispatch.role.padEnd(11)} {l.dispatch.profile.padEnd(13)} <span class={`${soft} whitespace-nowrap`}>{l.dispatch.model.padEnd(17)}</span>→ <span class={`tr-res ${tone(l.dispatch.result)}`}>{l.dispatch.result}</span> <span class={`tr-time ${soft}`}>({l.dispatch.time})</span></span>
       ) : (
-        <span class="block">{l.out}</span>
+        <span class="tr-line rise block" data-ln="out" style={d(i)}>{words(l.out).map((w) => (w.trim() ? <span class="whitespace-nowrap">{w}</span> : w))}</span>
       )
     ))}</code></pre>
-  {
-    label && (
-      <figcaption class="mt-3 font-mono text-[0.75rem] text-[var(--color-cream-soft)] max-w-3xl">
-        {label}
-      </figcaption>
-    )
-  }
+  <figcaption
+    class="rise mt-3 flex items-baseline justify-between gap-4 font-mono text-[0.75rem] text-[var(--color-cream-soft)]"
+    style={d(lines.length)}
+  >
+    {label && <span class="max-w-3xl">{label}</span>}
+    <button type="button" class="mo-ctl" data-pause aria-pressed="false">Pause</button>
+  </figcaption>
 </figure>

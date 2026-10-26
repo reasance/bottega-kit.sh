@@ -36,6 +36,21 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 }
 
+/* Motion curves. `ui` for hovers and presses; the other three for things
+ * arriving: transforms, opacity and blur, and wipes or travel. */
+:root {
+  --ease-ui: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fade: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 html,
 body {
   background: var(--color-soot);
@@ -147,6 +162,14 @@ summary:focus-visible {
   color: var(--color-soot);
   padding: 0.7rem 1.1rem;
   border: 1px solid var(--color-cream);
+  transition:
+    background-color 300ms var(--ease-ui),
+    border-color 300ms var(--ease-ui),
+    color 300ms var(--ease-ui),
+    transform 200ms var(--ease-ui);
+}
+.btn:active {
+  transform: translateY(1px);
 }
 .btn:hover {
   background: var(--color-you);
@@ -186,6 +209,9 @@ summary:focus-visible {
   text-decoration: underline;
   text-underline-offset: 0.2em;
   text-decoration-color: var(--color-line-strong);
+  transition:
+    color 300ms var(--ease-ui),
+    text-decoration-color 300ms var(--ease-ui);
 }
 .lnk:hover {
   text-decoration-color: var(--color-you);
@@ -197,6 +223,14 @@ summary:focus-visible {
 .band .lnk:hover {
   color: var(--color-you-ink);
   text-decoration-color: var(--color-you-ink);
+}
+
+/* A code block's caption: a file name or a role. */
+.cb-label {
+  color: var(--color-cream-soft);
+}
+.band .cb-label {
+  color: var(--color-ink-soft);
 }
 
 /* Status words: the signal, in its colour, with a dot. */
@@ -351,4 +385,147 @@ summary:focus-visible {
   fill: none;
   stroke: var(--color-ready);
   stroke-width: 1.5;
+}
+
+/* The transcript. On a phone a line wraps under a hanging indent rather than
+ * hiding its result past the right edge. */
+.tr-line {
+  position: relative;
+}
+@media (max-width: 639px) {
+  .tr-pre {
+    white-space: pre-wrap;
+    font-size: 0.75rem;
+  }
+  .tr-line {
+    padding-left: 4ch;
+    text-indent: -4ch;
+  }
+}
+
+/* Motion, home page only. BaseLayout sets `.motion` on <html> before paint
+ * when the reader has not asked for reduced motion; src/scripts/motion.ts
+ * does the rest. Without either, every rule below is inert and the page is
+ * its final, still self. */
+@keyframes m-fade {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+@keyframes m-lift {
+  from {
+    transform: translateY(10px);
+  }
+}
+.motion .rise {
+  animation:
+    m-fade 750ms var(--ease-fade) both,
+    m-lift 1050ms var(--ease-in) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* Sections rise once as they enter the viewport. */
+.motion [data-reveal] {
+  transition:
+    opacity 750ms var(--ease-fade),
+    filter 750ms var(--ease-fade),
+    transform 1050ms var(--ease-in);
+  transition-delay: var(--d, 0s);
+}
+.motion [data-reveal]:not(.in) {
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(12px);
+}
+.motion [data-reveal='card']:not(.in) {
+  filter: blur(6px);
+  transform: translateY(24px) scale(0.985);
+}
+
+/* The loop drawing waits, empty, for its intro. */
+.motion [data-loop]:not(.landed) [data-k] {
+  opacity: 0;
+}
+.dg [data-k='pop'] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.dg .lit {
+  fill: var(--color-cream);
+  fill-opacity: 0.08;
+  stroke: var(--color-cream);
+  stroke-width: 1.25;
+  opacity: 0;
+  pointer-events: none;
+}
+.dg .lit.lit-you {
+  fill: var(--color-you);
+  fill-opacity: 0.2;
+  stroke: var(--color-you);
+  stroke-width: 1.75;
+}
+
+/* Typed code: lines wait, unrevealed, for their turn. */
+.motion [data-typing] .ty-tx {
+  clip-path: inset(0 100% 0 0);
+}
+.ty-line {
+  position: relative;
+}
+
+/* Helpers the replays add, never part of the still page. */
+.caret {
+  position: absolute;
+  top: 0.2em;
+  width: 1ch;
+  height: 1.3em;
+  background: var(--color-cream);
+  opacity: 0;
+  pointer-events: none;
+}
+.tr-res,
+.tr-time {
+  position: relative;
+  display: inline-block;
+  text-indent: 0;
+}
+.tr-res.pending,
+.tr-time.counting {
+  color: transparent;
+}
+.tr-res.pending::after,
+.tr-time.counting::after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--color-cream-soft);
+}
+.tr-res.pending::after {
+  content: attr(data-spin);
+}
+.tr-time.counting::after {
+  content: attr(data-count);
+}
+
+/* Pause and play for a replay that runs longer than five seconds. */
+.mo-ctl {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-cream-soft);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--color-line-strong);
+  transition: color 300ms var(--ease-ui);
+}
+.mo-ctl:hover {
+  color: var(--color-you);
+}
+.motion .mo-ctl {
+  display: inline-block;
 }

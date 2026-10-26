@@ -13,5 +13,8 @@
   names, stop reasons, role names, receipt files) and the placeholders as
   they are; the numbers come from the kit.
 - Keep the site static: no runtime JavaScript beyond `CodeBlock`'s copy
-  button. CI fails a build whose gzipped JS exceeds 50 KB.
+  button and the home page's motion (`src/scripts/motion.ts`). The motion
+  only reveals what the HTML already holds, and with JavaScript off or
+  reduced motion on the page is its still, final self. CI fails a build
+  whose gzipped JS exceeds 50 KB.
 - Before a PR: `npm run check && npm run build`.

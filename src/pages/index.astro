@@ -150,32 +150,36 @@ const roleSignals: Record<string, string[]> = {
 };
 
 const wrap = 'max-w-[76rem] mx-auto px-5 sm:px-8';
-const ledger = 'grid gap-y-6 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-x-12';
+const ledger =
+  'grid grid-cols-[minmax(0,1fr)] gap-y-6 lg:grid-cols-[8rem_minmax(0,1fr)] lg:gap-x-12';
 const h2 = 'text-[2.3rem] md:text-[3.1rem] [text-wrap:balance] mb-4';
 const lead = 'text-lg text-[var(--color-cream-soft)] max-w-2xl';
 const soft = 'text-[var(--color-cream-soft)]';
 const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--color-cream-soft)]';
+// Items in a group arrive one after another as their section scrolls in.
+const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
 ---
 
-<BaseLayout path="/">
+<BaseLayout path="/" motion>
   <!-- Hero -->
   <section class={`${wrap} pt-14 pb-16 md:pt-24 md:pb-20`}>
-    <p class="eyebrow mb-8">{t(copy.hero.eyebrow)}</p>
+    <p class="eyebrow mb-8 rise" style="--d:0.05s">{t(copy.hero.eyebrow)}</p>
     <h1 class="text-[3.1rem] sm:text-[4rem] md:text-[5.2rem] xl:text-[6rem] [text-wrap:balance]">
       {
-        copy.hero.h1.map((line) => (
-          <span class="block">
+        copy.hero.h1.map((line, i) => (
+          <span class="block rise" style={`--d:${0.12 + i * 0.09}s`}>
             <Inline text={t(line)} />
           </span>
         ))
       }
     </h1>
     <p
-      class="mt-9 max-w-2xl text-lg md:text-[1.3rem] md:leading-[1.5] text-[var(--color-cream-soft)]"
+      class="rise mt-9 max-w-2xl text-lg md:text-[1.3rem] md:leading-[1.5] text-[var(--color-cream-soft)]"
+      style="--d:0.32s"
     >
       <Inline text={t(copy.hero.lead)} />
     </p>
-    <p class="mt-9 flex flex-wrap items-center gap-3">
+    <p class="rise mt-9 flex flex-wrap items-center gap-3" style="--d:0.42s">
       <a href="/docs/" class="btn">{copy.hero.cta}</a>
       <a href="#transcript" class="btn btn-ghost">{copy.hero.cta2}</a>
     </p>
@@ -188,21 +192,23 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   <section id="commands" class="band scroll-mt-4">
     <div class={`${wrap} py-16 md:py-20`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">01</p>
           <p class="eyebrow mt-1">Six commands</p>
         </div>
         <div>
-          <h2 class={h2}><Inline text={t(copy.commands.h2)} /></h2>
-          <p class="text-lg text-[var(--color-ink-soft)] max-w-2xl mb-12">
+          <h2 class={h2} data-reveal><Inline text={t(copy.commands.h2)} /></h2>
+          <p class="text-lg text-[var(--color-ink-soft)] max-w-2xl mb-12" data-reveal>
             <Inline text={t(copy.commands.lead)} />
           </p>
           <ol class="grid gap-x-8 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
             {
-              copy.commands.items.map((c) => {
+              copy.commands.items.map((c, i) => {
                 const you = c.cmd === 'approve';
                 return (
                   <li
+                    data-reveal
+                    style={stagger(i)}
                     class:list={[
                       'border-t pt-4',
                       you ? 'border-[var(--color-you-ink)]' : 'border-[var(--color-ink)]'
@@ -211,13 +217,11 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
                     <p class="font-mono text-[1.35rem] leading-none mb-3">
                       bottega{' '}
                       <span class:list={[you && 'text-[var(--color-you-ink)]']}>{c.cmd}</span>
-                      {you && (
-                        <span class="status status-you ml-2 align-middle">the human gate</span>
-                      )}
                     </p>
                     <p class="text-[var(--color-ink-soft)] text-[0.95rem]">
                       <Inline text={t(c.what)} />
                     </p>
+                    {you && <p class="status status-you mt-3">the human gate</p>}
                   </li>
                 );
               })
@@ -232,17 +236,17 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   <section id="rules" class="scroll-mt-4">
     <div class={`${wrap} py-16 md:py-20`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">02</p>
           <p class="eyebrow mt-1">The rules</p>
         </div>
         <div>
-          <h2 class={h2}><Inline text={t(copy.claims.h2)} /></h2>
-          <p class={`${lead} mb-12`}><Inline text={t(copy.claims.lead)} /></p>
+          <h2 class={h2} data-reveal><Inline text={t(copy.claims.h2)} /></h2>
+          <p class={`${lead} mb-12`} data-reveal><Inline text={t(copy.claims.lead)} /></p>
           <ul class="grid gap-x-10 gap-y-10 md:grid-cols-2">
             {
-              copy.claims.items.map((c) => (
-                <li class="border-t border-[var(--color-line)] pt-5">
+              copy.claims.items.map((c, i) => (
+                <li class="border-t border-[var(--color-line)] pt-5" data-reveal style={stagger(i)}>
                   <h3 class="text-[1.75rem] md:text-[2rem] mb-3 [text-wrap:balance]">
                     <Inline text={t(c.title)} />
                   </h3>
@@ -262,22 +266,29 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   <section id="loop" class="sec scroll-mt-4">
     <div class={`${wrap} py-16 md:py-20`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">03</p>
           <p class="eyebrow mt-1">The loop</p>
         </div>
         <div>
-          <h2 class={h2}><Inline text={t(copy.loop.h2)} /></h2>
-          <p class={`${lead} mb-12`}><Inline text={t(copy.loop.lead)} /></p>
-          <div
-            class="mb-12 hidden sm:block border border-[var(--color-line)] bg-[var(--color-coal)] p-4 md:p-6"
-          >
-            <LoopDiagram />
-          </div>
+          <h2 class={h2} data-reveal><Inline text={t(copy.loop.h2)} /></h2>
+          <p class={`${lead} mb-12`} data-reveal><Inline text={t(copy.loop.lead)} /></p>
+          <figure class="mb-12" data-reveal="card">
+            <div
+              class="overflow-x-auto border border-[var(--color-line)] bg-[var(--color-coal)] p-4 md:p-6"
+            >
+              <div class="min-w-[42rem]">
+                <LoopDiagram />
+              </div>
+            </div>
+            <figcaption class="mt-3 flex justify-end">
+              <button type="button" class="mo-ctl" data-pause aria-pressed="false">Pause</button>
+            </figcaption>
+          </figure>
           <ol class="grid gap-x-8 gap-y-6 md:grid-cols-2 xl:grid-cols-3">
             {
-              copy.loop.rules.map((r) => (
-                <li class="border-t border-[var(--color-line)] pt-3">
+              copy.loop.rules.map((r, i) => (
+                <li class="border-t border-[var(--color-line)] pt-3" data-reveal style={stagger(i)}>
                   <span class={`status ${ruleStatus[r.word] ?? 'status-ready'}`}>{r.word}</span>
                   <p class={`mt-2 text-[0.95rem] ${soft}`}>
                     <Inline text={t(r.text)} />
@@ -286,7 +297,7 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
               ))
             }
           </ol>
-          <p class={`mt-12 ${soft} max-w-2xl`}>
+          <p class={`mt-12 ${soft} max-w-2xl`} data-reveal>
             <Inline text={t(copy.loop.after)} />
             <a href="/docs/process/" class="lnk">{copy.loop.afterLink}</a>
           </p>
@@ -302,17 +313,21 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   >
     <div class={`${wrap} py-16 md:py-20`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">04</p>
           <p class="eyebrow mt-1">The roles</p>
         </div>
         <div>
-          <h2 class={h2}><Inline text={t(copy.roles.h2)} /></h2>
-          <p class={`${lead} mb-12`}><Inline text={t(copy.roles.lead)} /></p>
+          <h2 class={h2} data-reveal><Inline text={t(copy.roles.h2)} /></h2>
+          <p class={`${lead} mb-12`} data-reveal><Inline text={t(copy.roles.lead)} /></p>
           <ol class="grid gap-x-8 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
             {
               copy.roles.items.map((r, i) => (
-                <li class="border-t border-[var(--color-line-strong)] pt-4 flex flex-col gap-3">
+                <li
+                  class="border-t border-[var(--color-line-strong)] pt-4 flex flex-col gap-3"
+                  data-reveal
+                  style={stagger(i)}
+                >
                   <p class="display text-[3rem] leading-none text-[var(--color-cream-soft)]">
                     {i + 1}
                   </p>
@@ -346,7 +361,10 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
             }
           </ol>
 
-          <div class="mt-16 grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-10">
+          <div
+            class="mt-16 grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-10"
+            data-reveal
+          >
             <div>
               <h3 class="text-[1.75rem] md:text-[2rem] mb-3">
                 <Inline text={t(copy.roles.bindH3)} />
@@ -367,17 +385,17 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   <section id="harnesses" class="sec scroll-mt-4">
     <div class={`${wrap} py-16 md:py-20`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">05</p>
           <p class="eyebrow mt-1">The harnesses</p>
         </div>
         <div>
-          <h2 class={h2}><Inline text={t(copy.harnesses.h2)} /></h2>
-          <p class={`${lead} mb-12`}><Inline text={t(copy.harnesses.lead)} /></p>
+          <h2 class={h2} data-reveal><Inline text={t(copy.harnesses.h2)} /></h2>
+          <p class={`${lead} mb-12`} data-reveal><Inline text={t(copy.harnesses.lead)} /></p>
           <div class="grid gap-10 lg:grid-cols-2">
             {
-              harnesses.map((harness) => (
-                <div class="min-w-0">
+              harnesses.map((harness, i) => (
+                <div class="min-w-0" data-reveal style={stagger(i % 2)}>
                   <h3 class="font-mono text-[1.2rem] mb-3">{harness}</h3>
                   <p class={`${soft} mb-5`}>
                     <Inline text={t(harnessText[harness])} />
@@ -389,7 +407,7 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
               ))
             }
           </div>
-          <p class={`mt-12 ${soft} max-w-2xl`}>
+          <p class={`mt-12 ${soft} max-w-2xl`} data-reveal>
             <Inline text={t(copy.harnesses.after)} />
             <a href="/docs/compatibility/" class="lnk">{t(copy.harnesses.afterLink)}</a>
           </p>
@@ -402,12 +420,12 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   <section id="receipt" class="sec scroll-mt-4">
     <div class={`${wrap} py-16 md:py-20`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">06</p>
           <p class="eyebrow mt-1">The receipt</p>
         </div>
         <div class="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-14">
-          <div>
+          <div data-reveal>
             <h2 class="text-[2.3rem] md:text-[2.8rem] [text-wrap:balance] mb-4">
               <Inline text={t(copy.receipt.h2)} />
             </h2>
@@ -417,8 +435,12 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
           </div>
           <ul class="border-b border-[var(--color-line)] self-start">
             {
-              copy.receipt.items.map((r) => (
-                <li class="border-t border-[var(--color-line)] py-3 grid grid-cols-[8.5rem_1fr] gap-4">
+              copy.receipt.items.map((r, i) => (
+                <li
+                  class="border-t border-[var(--color-line)] py-3 grid grid-cols-[8.5rem_1fr] gap-4"
+                  data-reveal
+                  style={stagger(i)}
+                >
                   <span class="font-mono text-[0.85rem] pt-0.5">{r.file}</span>
                   <span class={soft}>
                     <Inline text={t(r.what)} />
@@ -436,30 +458,37 @@ const label = 'font-mono text-[0.72rem] tracking-wide uppercase text-[var(--colo
   <section id="install" class="band scroll-mt-4">
     <div class={`${wrap} py-16 md:py-24`}>
       <div class={ledger}>
-        <div>
+        <div data-reveal>
           <p class="idx">07</p>
           <p class="eyebrow mt-1">Install</p>
         </div>
         <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 items-start">
           <div>
-            <h2 class={h2}><Inline text={t(copy.install.h2)} /></h2>
-            <p class="text-lg text-[var(--color-ink-soft)] max-w-xl">
+            <h2 class={h2} data-reveal><Inline text={t(copy.install.h2)} /></h2>
+            <p class="text-lg text-[var(--color-ink-soft)] max-w-xl" data-reveal>
               <Inline text={t(copy.install.text)} />
             </p>
-            <p class="mt-8 flex flex-wrap gap-3">
+            <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3" data-reveal>
               <a href="/docs/" class="btn">{copy.install.cta}</a>
-              <a href="/docs/process/" class="btn btn-ghost">{copy.install.cta2}</a>
-              <a href="/changelog/" class="btn btn-ghost">{copy.install.cta3}</a>
+              <a href="/docs/process/" class="lnk font-mono text-[0.9rem]">{copy.install.cta2}</a>
+              <a href="/changelog/" class="lnk font-mono text-[0.9rem]">{copy.install.cta3}</a>
             </p>
           </div>
-          <CodeBlock
-            label="Terminal"
-            code={`npx bottega-kit
+          <div data-reveal="card">
+            <CodeBlock
+              label="Terminal"
+              typing
+              code={`npx bottega-kit
 bottega init
 bottega doctor`}
-          />
+            />
+          </div>
         </div>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  import '../scripts/motion';
+</script>

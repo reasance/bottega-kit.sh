@@ -29,6 +29,10 @@ written by hand here:
 blocks between `<!-- BEGIN AUTOGEN -->` / `<!-- END AUTOGEN -->` markers. It
 never dispatches a model.
 
+The generated release link and documentation version come from the kit's
+current tag. Repository links in the synced docs point to that tag, so they
+describe the same release as the site.
+
 ```bash
 npm run sync-kit                      # refresh from ../bottega-kit (or BOTTEGA_KIT_ROOT)
 npm run sync-kit -- --check           # exit 1 if out of sync; skipped when the kit checkout is absent (CI)

@@ -116,6 +116,8 @@ const changelog = await readFile(resolve(kitRoot, 'CHANGELOG.md'), 'utf8');
 const head = changelog.match(/^## \[([^\]]+)\] — (\d{4}-\d{2}-\d{2})/m);
 if (!head) fail('CHANGELOG.md has no `## [version] — date` heading');
 if (head[1] !== pkg.version) fail(`CHANGELOG head ${head[1]} != package.json ${pkg.version}`);
+const releaseTag = `bottega-kit--v${pkg.version}`;
+const releaseUrl = `${GITHUB}/releases/tag/${releaseTag}`;
 
 // ---- the kit's own tables, through python3 ------------------------------------
 // An import of the kit's modules (standard library only), isolated from the
@@ -163,7 +165,7 @@ try {
 if (tables.version !== pkg.version)
   fail(`version.py ${tables.version} != package.json ${pkg.version}`);
 
-const kit = { ...tables, releaseDate: head[2], syncedAt: head[2] };
+const kit = { ...tables, releaseTag, releaseUrl, releaseDate: head[2], syncedAt: head[2] };
 await emit('src/data/kit.json', `${JSON.stringify(kit, null, 2)}\n`);
 
 // ---- markdown docs ------------------------------------------------------------
@@ -183,13 +185,16 @@ const routeFor = {
 
 function rewriteLinks(markdown, sourcePath) {
   const sourceDir = posix.dirname(sourcePath);
-  return markdown.replace(
+  const pinned = markdown
+    .replaceAll(`${GITHUB}/blob/main/`, `${GITHUB}/blob/${releaseTag}/`)
+    .replaceAll(`${GITHUB}/tree/main/`, `${GITHUB}/tree/${releaseTag}/`);
+  return pinned.replace(
     /\]\(((?:\.\.?\/)?[A-Za-z0-9_./-]+\.(?:md|json|toml|sh|py))(#[^)\s]*)?\)/g,
     (match, target, hash = '') => {
       if (/^[a-z]+:/.test(target)) return match;
       const kitPath = posix.normalize(posix.join(sourceDir, target));
       if (routeFor[kitPath]) return `](${routeFor[kitPath]}${hash})`;
-      return `](${GITHUB}/blob/main/${kitPath}${hash})`;
+      return `](${GITHUB}/blob/${releaseTag}/${kitPath}${hash})`;
     }
   );
 }

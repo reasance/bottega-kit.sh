@@ -719,6 +719,8 @@
       ]
     }
   },
+  "releaseTag": "bottega-kit--v0.3.1",
+  "releaseUrl": "https://github.com/reasance/bottega-kit/releases/tag/bottega-kit--v0.3.1",
   "releaseDate": "2026-10-27",
   "syncedAt": "2026-10-27"
 }

@@ -173,7 +173,10 @@ const motionBoot = `if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
           <span aria-hidden="true"> · </span>
           <a href="/changelog/" class={navLink}>Changelog</a>
         </span>
-        <span>bottega-kit {kit.version} · {kit.releaseDate}</span>
+        <span>
+          <a href={kit.releaseUrl} class={navLink} rel="noopener">bottega-kit {kit.version}</a>
+          · {kit.releaseDate}
+        </span>
       </div>
     </footer>
   </body>

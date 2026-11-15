@@ -13,7 +13,7 @@
     "cta": "Get started →",
     "cta2": "Watch a task run ↓",
     "transcript": "full",
-    "transcriptCaption": "One line per dispatch: the profile, and the model the harness reported."
+    "transcriptCaption": "Recorded workflow example from October 2026, before the current model defaults. One line per dispatch: the profile and the model the harness reported."
   },
   "commands": {
     "h2": "Six commands. Nothing runs in the background.",
@@ -129,7 +129,7 @@
       }
     ],
     "bindH3": "Bind each role to a profile.",
-    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds `claude` and `codex`. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
+    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds `claude` and `codex`. Opus/high plans, builds and reviews; the optional judge uses Fable 5.2/high, with max as an explicit option. New agy setups use Hydrogen/high, with optional medium/xhigh profiles and Carbon/high planning or judgement. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
     "bindLink": "Every setting →"
   },
   "harnesses": {

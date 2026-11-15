@@ -15,6 +15,19 @@ GitHub Release. -->
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-11-15
+
+- Use Hydrogen/high for new agy setups. Add explicit Hydrogen/xhigh and medium profiles plus optional Carbon/high planner and judge profiles. Carbon checks exact account inventory before dispatch; old personal profiles are preserved.
+
+- Use Fable 5.2/high for the optional judge in new Claude setups and add an explicit fable-max option. Planning, implementation and review remain Opus/high. Claude Code >=2.1.321 is required; existing user configurations are preserved.
+- Refresh the model reference to AA v5.0.1. Carbon uses officially documented agy IDs with per-account gating; no API harness is introduced.
+
+## [0.4.0] — 2026-10-28
+
+- Refresh starter role choices using the Artificial Analysis v5 snapshot. New Claude setups use Opus/high for planning and Opus/max for the optional judge; implementation and review stay Opus/high.
+- New Codex setups use Astra/high for review alongside Sol/high planning and implementation, and include Terra/high as an optional builder.
+- Generate role bindings from controller-models as well as profile definitions. Existing user configurations remain unchanged. Separate OpenAI roles are not cross-vendor review.
+
 ## [0.3.1] — 2026-10-27
 
 - Document an optional GPT-6.1 Terra Codex profile and verify model/effort forwarding for every role with fake harness runs. Starter profiles and runtime behavior stay unchanged.

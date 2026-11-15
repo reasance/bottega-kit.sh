@@ -31,7 +31,7 @@ only CLI found, to no role otherwise. `grok` and `muse` on PATH add a
 `grok` profile (`"harness": "grok", "model": "grok-4.7", "effort": "high"`)
 and a `muse` profile (`"harness": "muse", "model": "muse-wonder-1.0",
 "effort": "high"`) the same way, and `agy` a `gemini` profile (`"harness":
-"agy", "model": "gemini-3.8-flash-high", "effort": "high"`); the first CLI
+"agy", "model": "gemini-4-hydrogen-high", "effort": "high"`); the first CLI
 found in the order `claude`, `codex`, `kimi`, `grok`, `muse`, `agy` binds
 the roles. With none of them, it is the
 `claude` one.
@@ -40,12 +40,15 @@ the roles. With none of them, it is the
 {
   "schema_version": 1,
   "profiles": {
-    "fable":         {"harness": "claude", "model": "claude-fable-5-1", "effort": "max"},
+    "fable":        {"harness": "claude", "model": "claude-fable-5-2", "effort": "high"},
+    "fable-max":    {"harness": "claude", "model": "claude-fable-5-2", "effort": "max"},
+    "opus-planner":  {"harness": "claude", "model": "claude-opus-5-5", "effort": "high"},
+    "opus-judge":    {"harness": "claude", "model": "claude-opus-5-5", "effort": "max"},
     "opus-builder":  {"harness": "claude", "model": "claude-opus-5-5",  "effort": "high"},
     "opus-reviewer": {"harness": "claude", "model": "claude-opus-5-5",  "effort": "high"},
     "sol-builder":   {"harness": "codex",  "model": "gpt-6.1-sol",     "effort": "high"}
   },
-  "roles": {"planner": "fable", "implementer": "opus-builder",
+  "roles": {"planner": "opus-planner", "implementer": "opus-builder",
             "reviewer": "opus-reviewer", "judge": "fable"},
   "rounds": 3
 }
@@ -282,5 +285,26 @@ profile, its effort, its harness answering `--version`, and its `${NAME}`
 variables, saying whether each comes from the environment or from the key
 file. Any failure exits 2. `./doctor.sh`, in a clone, also compares the
 installed version with the clone's.
+
+## Starter choices after the AA v5 refresh
+
+New Claude configurations bind planner to Opus/high, implementer and reviewer
+to Opus/high, and the optional judge to Opus/max. New Codex configurations use
+Sol/high for planning and implementation, Astra/high for review, and include
+Terra/high as an optional bounded-work builder. Existing configurations are not
+rewritten. The reviewer is a separate run; Astra and Sol share a provider, so
+this does not establish cross-vendor independence.
+
+The Artificial Analysis v5 snapshot informed these choices; it does not qualify
+security review or predict the cost of a repository task.
+
+## Optional Google frontier profiles
+
+The agy starter uses Hydrogen/high. Select `hydrogen-deep` for xhigh or
+`hydrogen-scout` for medium. Optional `carbon-planner` and `carbon-judge` use
+Carbon/high. For example, bind `planner` to `carbon-planner` and `implementer`
+to `gemini` deliberately in your configuration. Carbon requires its exact
+`gemini-4-carbon-high` ID in `agy models`; unsupported accounts are refused
+before a model run, with no provider or model substitution.
 
 <!-- END AUTOGEN -->

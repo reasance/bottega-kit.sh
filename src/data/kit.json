@@ -1,5 +1,5 @@
 {
-  "version": "0.3.1",
+  "version": "0.5.0",
   "harnesses": [
     "claude",
     "codex",
@@ -102,8 +102,8 @@
     "profiles": {
       "fable": {
         "harness": "claude",
-        "model": "claude-fable-5-1",
-        "effort": "max"
+        "model": "claude-fable-5-2",
+        "effort": "high"
       },
       "opus-builder": {
         "harness": "claude",
@@ -115,14 +115,39 @@
         "model": "claude-opus-5-5",
         "effort": "high"
       },
+      "opus-planner": {
+        "harness": "claude",
+        "model": "claude-opus-5-5",
+        "effort": "high"
+      },
+      "opus-judge": {
+        "harness": "claude",
+        "model": "claude-opus-5-5",
+        "effort": "max"
+      },
+      "fable-max": {
+        "harness": "claude",
+        "model": "claude-fable-5-2",
+        "effort": "max"
+      },
       "sol-builder": {
         "harness": "codex",
         "model": "gpt-6.1-sol",
         "effort": "high"
+      },
+      "astra-reviewer": {
+        "harness": "codex",
+        "model": "gpt-6-astra",
+        "effort": "high"
+      },
+      "terra-builder": {
+        "harness": "codex",
+        "model": "gpt-6.1-terra",
+        "effort": "high"
       }
     },
     "roles": {
-      "planner": "fable",
+      "planner": "opus-planner",
       "implementer": "opus-builder",
       "reviewer": "opus-reviewer",
       "judge": "fable"
@@ -719,8 +744,8 @@
       ]
     }
   },
-  "releaseTag": "bottega-kit--v0.3.1",
-  "releaseUrl": "https://github.com/reasance/bottega-kit/releases/tag/bottega-kit--v0.3.1",
-  "releaseDate": "2026-10-27",
-  "syncedAt": "2026-10-27"
+  "releaseTag": "bottega-kit--v0.5.0",
+  "releaseUrl": "https://github.com/reasance/bottega-kit/releases/tag/bottega-kit--v0.5.0",
+  "releaseDate": "2026-11-15",
+  "syncedAt": "2026-11-15"
 }

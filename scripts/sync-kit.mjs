@@ -172,6 +172,7 @@ await emit('src/data/kit.json', `${JSON.stringify(kit, null, 2)}\n`);
 const routeFor = {
   'README.md': '/docs/',
   'CHANGELOG.md': '/changelog/',
+  'docs/model-benchmarks.md': '/docs/models/',
   'docs/process.md': '/docs/process/',
   'docs/configuration.md': '/docs/configuration/',
   'docs/compatibility.md': '/docs/compatibility/',
@@ -225,6 +226,7 @@ await syncDoc('README.md', 'src/pages/docs/index.md');
 await syncDoc('docs/process.md', 'src/pages/docs/process.md');
 await syncDoc('docs/configuration.md', 'src/pages/docs/configuration.md');
 await syncDoc('docs/compatibility.md', 'src/pages/docs/compatibility.md');
+await syncDoc('docs/model-benchmarks.md', 'src/pages/docs/models.md');
 await syncDoc('docs/later.md', 'src/pages/docs/later.md');
 
 // The task template and the four prompts, verbatim, each in a fence longer

@@ -129,7 +129,7 @@
       }
     ],
     "bindH3": "Bind each role to a profile.",
-    "bindText": "A profile is a harness, a model and an effort. `bottega init` writes this starter when it finds `claude` and `codex`. Fable plans and judges, Opus builds and reviews. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
+    "bindText": "A profile is a harness, a model and an effort. The example below is the published v{version} starter for `claude` and `codex`. In the next release, Opus/high plans, builds and reviews; the optional judge uses Fable 5.2/high. Codex starters pair Sol/high with Astra/high review and include an optional Terra/high builder. A Claude profile on another endpoint runs with {proxyStripped} Anthropic variables removed.",
     "bindLink": "Every setting →"
   },
   "harnesses": {

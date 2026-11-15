@@ -155,6 +155,14 @@ const motionBoot = `if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
       </nav>
     </header>
 
+    <aside aria-label="Release preview" class="max-w-6xl mx-auto px-6 py-5 text-sm">
+      <p>
+        <strong>Next release preview:</strong> Fable 5.2, Gemini 4 Hydrogen and Carbon.
+        <a href="/next/models/" class="underline">See benchmarks, roles and CLI availability →</a>
+        These changes are unreleased; npm currently serves v0.3.1.
+      </p>
+    </aside>
+
     <main id="main" class:list={[isDoc ? 'doc max-w-[76rem] mx-auto px-5 sm:px-8 py-12' : '']}>
       <slot />
     </main>

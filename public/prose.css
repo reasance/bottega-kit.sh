@@ -132,13 +132,14 @@
   background: var(--color-coal-deep);
   border: 1px solid var(--color-line);
   padding: 1rem 1.25rem;
-  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   margin: 0 0 1.25rem;
 }
 
 /* Shiki's blocks in Markdown look like the home page's: deep coal, square. */
 .doc pre.astro-code {
-  background: var(--color-coal-deep) !important;
+  background: var(--color-terminal) !important;
 }
 
 /* github-dark comments (#6A737D) are 3.4:1 on the block; this grey is 5.7:1. */
@@ -150,16 +151,19 @@
   background: transparent;
   border: 0;
   padding: 0;
+  white-space: inherit;
   font-size: inherit;
 }
 
-.doc table:not(.not-prose *) {
-  display: block;
+.doc-table-scroll {
   overflow-x: auto;
   max-width: 100%;
+  margin: 1.5rem 0 2rem;
+}
+
+.doc table:not(.not-prose *) {
   width: 100%;
   border-collapse: collapse;
-  margin: 1.5rem 0 2rem;
   font-size: 0.9rem;
 }
 

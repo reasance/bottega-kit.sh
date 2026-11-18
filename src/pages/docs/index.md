@@ -7,6 +7,28 @@ path: '/docs'
 
 <!-- Synced from README.md in the kit repository by `npm run sync-kit`: edit there, not here. -->
 
+<aside class="quickstart" aria-label="Run your first task">
+
+**Run your first task**
+
+Install Git, GitHub CLI, Python 3 and at least one supported coding-agent CLI.
+Sign in to that agent before you start. Then install and configure Bottega.
+
+<pre tabindex="0" role="region" aria-label="Install and configure Bottega"><code>npx bottega-kit
+bottega init
+bottega doctor</code></pre>
+
+In your Git repository, start by creating a task.
+
+```sh
+bottega new --title "Add a dry-run flag" --request "Show what the command would do without writing files."
+```
+
+Follow the printed `bottega plan` command. Read the plan before approving it, then
+follow the [task example](/docs/process/#a-task-end-to-end) through the review and PR.
+
+</aside>
+
 <!-- BEGIN AUTOGEN -->
 
 # bottega-kit

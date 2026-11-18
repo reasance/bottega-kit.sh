@@ -23,13 +23,15 @@ const t = (s: string) => s.replace(/\{(\w+)\}/g, (m, k) => (k in values ? String
 
 // The starter configuration, as `bottega init` writes it when it finds both
 // CLIs, in the README's one-profile-per-line shape.
-const spaced = (value: unknown) =>
-  JSON.stringify(value).replace(/,"/g, ', "').replace(/":/g, '": ');
+const spaced = (value: Record<string, unknown>) =>
+  `{${Object.entries(value)
+    .map(([key, field]) => `${JSON.stringify(key)}: ${JSON.stringify(field)}`)
+    .join(', ')}}`;
 const config = `{
   "schema_version": ${kit.starter.schema_version},
   "profiles": {
 ${Object.entries(kit.starter.profiles)
-  .map(([name, profile]) => `    ${JSON.stringify(name).padEnd(16)} ${spaced(profile)}`)
+  .map(([name, profile]) => `    ${(JSON.stringify(name) + ':').padEnd(17)} ${spaced(profile)}`)
   .join(',\n')}
   },
   "roles": ${spaced(kit.starter.roles)},
@@ -197,7 +199,12 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
     <h2 id="model-preview-title" class="text-3xl md:text-4xl mb-6">
       Qwen4 Max, with explicit roles.
     </h2>
-    <p class="max-w-2xl mb-5">Qwen4 is an optional implementation profile through the existing Claude harness and an explicit QwenCloud Token Plan endpoint. Its structured context check passed; planner, reviewer and judge defaults stay yours. AA reports 42.9 for an unnamed default setting, with no high/xhigh score. <a href="/docs/models/" class="underline">Model evidence →</a></p>
+    <p class="max-w-2xl mb-5">
+      Qwen4 is an optional implementation profile through the existing Claude harness and an
+      explicit QwenCloud Token Plan endpoint. Its structured context check passed; planner, reviewer
+      and judge defaults stay yours. AA reports 42.9 for an unnamed default setting, with no
+      high/xhigh score. <a href="/docs/models/" class="underline">Model evidence →</a>
+    </p>
     <p class="max-w-2xl mb-5">
       Fable 5.2/high scores 61.8 and max 64.6. Carbon/high scores 60.0; Hydrogen/high 50.8 and xhigh
       53.9. Each score belongs to that effort. Frontier starts at 56.6 and mid at 44.6.
@@ -306,6 +313,9 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
           <figure class="mb-12" data-reveal="card">
             <div
               class="overflow-x-auto border border-[var(--color-line)] bg-[var(--color-coal)] p-4 md:p-6"
+              tabindex="0"
+              role="region"
+              aria-label="Task workflow diagram"
             >
               <div class="min-w-[42rem]">
                 <LoopDiagram />

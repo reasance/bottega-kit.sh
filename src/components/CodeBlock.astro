@@ -14,56 +14,60 @@ const { code, lang = 'sh', label, wrap = false, typing = false } = Astro.props;
 ---
 
 <div class="cb-wrap min-w-0">
-  {
-    /* Mono like an eyebrow, but not uppercased: labels can hold a file path. */
-    label && <p class="cb-label mb-2 font-mono text-[0.75rem]">{label}</p>
-  }
+  <div class="mb-2 flex min-w-0 items-center gap-3">
+    {
+      label && (
+        <p class="cb-label min-w-0 font-mono text-xs [overflow-wrap:anywhere]">
+          {label}
+        </p>
+      )
+    }
+    <button
+      type="button"
+      class="ml-auto min-h-11 shrink-0 border border-[var(--color-line-strong)] px-3 font-mono text-xs text-[var(--color-cream)]"
+      data-copy={code}
+      aria-label={label ? `Copy: ${label}` : 'Copy code to clipboard'}>Copy</button
+    >
+  </div>
   <div class="relative group" data-typing={typing ? '' : undefined}>
     <pre
+      tabindex={wrap ? undefined : 0}
+      role={wrap ? undefined : 'region'}
+      aria-label={wrap ? undefined : (label ?? 'Code example')}
       class:list={[
         'bg-[var(--color-coal-deep)] text-[var(--color-cream)] border border-[var(--color-line)] px-4 py-3.5 overflow-x-auto text-[0.84rem] leading-relaxed w-full',
         wrap && 'whitespace-pre-wrap [overflow-wrap:anywhere]'
       ]}><code data-lang={lang}>{typing ? code.split('\n').map((l) => <span class="ty-line block"><span class="ty-tx">{l}</span></span>) : code}</code></pre>
-    <button
-      type="button"
-      class="absolute top-2 right-2 text-[0.7rem] px-2 py-1 bg-[var(--color-coal)] text-[var(--color-cream-soft)] border border-[var(--color-line-strong)] font-mono opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity hover:text-[var(--color-cream)]"
-      data-copy={code}
-      aria-label="Copy code to clipboard"
-    >
-      Copy
-    </button>
   </div>
+  <p class="text-xs empty:m-0" role="status" data-copy-status></p>
 </div>
 
-<style>
-  /* Touch screens have no hover: keep the button in sight, in its own strip
-   * above the first line so it never covers code. */
-  @media (hover: none) {
-    [data-copy] {
-      opacity: 0.75;
-    }
-    pre {
-      padding-top: 2.5rem;
-    }
-  }
-</style>
-
 <script>
-  // One delegated listener for every CodeBlock on the page.
+  const timers = new WeakMap<HTMLButtonElement, ReturnType<typeof setTimeout>>();
   document.addEventListener('click', async (event) => {
     const target = event.target as HTMLElement | null;
-    const btn = target?.closest<HTMLButtonElement>('button[data-copy]');
-    if (!btn) return;
-    const text = btn.dataset.copy ?? '';
-    const original = btn.textContent;
+    const button = target?.closest<HTMLButtonElement>('button[data-copy]');
+    if (!button) return;
+    const status = button.closest('.cb-wrap')?.querySelector('[data-copy-status]');
+    const previous = timers.get(button);
+    if (previous) clearTimeout(previous);
+    if (status) status.textContent = '';
     try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = 'Copied';
+      await navigator.clipboard.writeText(button.dataset.copy ?? '');
+      button.textContent = 'Copied';
+      if (status) status.textContent = 'Code copied to the clipboard.';
     } catch {
-      btn.textContent = 'Press Ctrl+C';
+      button.textContent = 'Copy';
+      if (status)
+        status.textContent = 'Clipboard unavailable. Select the code and copy it manually.';
+      return;
     }
-    setTimeout(() => {
-      btn.textContent = original;
-    }, 1200);
+    timers.set(
+      button,
+      setTimeout(() => {
+        button.textContent = 'Copy';
+        if (status) status.textContent = '';
+      }, 2200)
+    );
   });
 </script>

@@ -24,7 +24,7 @@ const { code, lang = 'sh', label, wrap = false, typing = false } = Astro.props;
     }
     <button
       type="button"
-      class="ml-auto min-h-11 shrink-0 border border-[var(--color-line-strong)] px-3 font-mono text-xs text-[var(--color-cream)]"
+      class="ml-auto min-h-11 shrink-0 border border-[var(--color-line-strong)] bg-[var(--color-soot)] px-3 font-mono text-xs text-[var(--color-cream)] hover:bg-[var(--color-coal)]"
       data-copy={code}
       aria-label={label ? `Copy: ${label}` : 'Copy code to clipboard'}>Copy</button
     >

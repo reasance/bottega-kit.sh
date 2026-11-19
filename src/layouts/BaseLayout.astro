@@ -50,7 +50,8 @@ const nav = [
   { href: '/#commands', label: 'Commands' },
   { href: '/#loop', label: 'The loop' },
   { href: '/#roles', label: 'Roles' },
-  { href: '/docs/', label: 'Docs' }
+  { href: '/docs/', label: 'Docs' },
+  { href: 'https://github.com/reasance/bottega-kit', label: 'GitHub' }
 ];
 const navLink = 'hover:text-[var(--color-you)] transition-colors';
 
@@ -125,7 +126,7 @@ const motionBoot = `if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
     >
     <header class="border-b border-[var(--color-line)]">
       <nav
-        class="max-w-[76rem] mx-auto px-5 sm:px-8 min-h-16 py-3 flex flex-wrap items-center justify-between gap-x-8 gap-y-2"
+        class="max-w-[76rem] mx-auto px-5 sm:px-8 min-h-16 py-2 flex items-center justify-between gap-x-4 sm:gap-x-8"
       >
         <a href="/" class="flex items-center gap-3 whitespace-nowrap">
           <span class="mark" aria-hidden="true"></span>
@@ -136,7 +137,7 @@ const motionBoot = `if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
           >
         </a>
         <ul
-          class="flex flex-wrap w-full sm:w-auto justify-start sm:justify-end gap-x-5 gap-y-1 font-mono text-[0.8rem] tracking-wide text-[var(--color-cream-soft)]"
+          class="hidden md:flex flex-wrap justify-end gap-x-5 gap-y-1 font-mono text-[0.8rem] tracking-wide text-[var(--color-cream-soft)]"
         >
           {
             nav.map((item) => (
@@ -147,12 +148,15 @@ const motionBoot = `if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
               </li>
             ))
           }
-          <li>
-            <a href="https://github.com/reasance/bottega-kit" class={navLink} rel="noopener">
-              GitHub ↗
-            </a>
-          </li>
         </ul>
+        <details class="relative md:hidden" data-mobile-menu>
+          <summary class="cursor-pointer min-h-11 py-3 px-3 border border-[var(--color-line-strong)] font-mono text-sm">Menu</summary>
+          <ul class="absolute z-30 right-0 top-full mt-2 min-w-40 border border-[var(--color-line-strong)] bg-[var(--color-soot)] p-2 font-mono text-sm">
+            {nav.map((item) => (
+              <li><a href={item.href} class:list={[navLink, 'block px-3 py-3']}>{item.label}</a></li>
+            ))}
+          </ul>
+        </details>
       </nav>
     </header>
 
@@ -180,5 +184,18 @@ const motionBoot = `if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
         </span>
       </div>
     </footer>
+
+    <script>
+      const menu = document.querySelector<HTMLDetailsElement>('[data-mobile-menu]');
+      menu?.addEventListener('click', (event) => {
+        if (event.target instanceof Element && event.target.closest('a')) menu.open = false;
+      });
+      menu?.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menu.open) {
+          menu.open = false;
+          menu.querySelector('summary')?.focus();
+        }
+      });
+    </script>
   </body>
 </html>

@@ -4,14 +4,13 @@
     "description": "Planner, implementer, reviewer and optional judge on Claude Code, Codex, Kimi Code, Grok Build, Muse Code or the Antigravity CLI. A receipt per dispatch."
   },
   "hero": {
-    "eyebrow": "Local coding-agent loop · six harnesses",
     "h1": [
       "You approve the plan.",
       "The agents do *the rounds.*"
     ],
-    "lead": "A planner writes the plan. You approve it once. Implementer and reviewer take the rounds, up to a cap; a judge says whether to merge. Then a pull request. Every dispatch leaves a receipt.",
+    "lead": "Take a change from plan to pull request with the coding agents you already use. You approve the plan, set the round limit and get a receipt for each run.",
     "cta": "Get started →",
-    "cta2": "Watch a task run ↓",
+    "cta2": "See a task run",
     "transcript": "full",
     "transcriptCaption": "Recorded workflow example from October 2026, before the current model defaults. One line per dispatch: the profile and the model the harness reported."
   },

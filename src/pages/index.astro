@@ -130,6 +130,12 @@ const runLines: Line[] = [
   { out: 'https://github.com/you/your-repo/pull/42' }
 ];
 const transcript = copy.hero.transcript === 'full' ? [...planLines, ...runLines] : runLines;
+const taskSteps = [
+  { title: 'You approve the plan', detail: 'Approve the tasks and round limit.', human: true },
+  { title: 'The implementer adds the flag', detail: 'Changes are made in the task worktree.' },
+  { title: 'Review asks for a correction', detail: 'A second round ends with a ready signal.' },
+  { title: 'You open the pull request', detail: 'The judge marks the change ready for your review.', human: true }
+];
 
 const statusClass: Record<string, string> = {
   ready: 'status status-ready',
@@ -164,8 +170,7 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
 
 <BaseLayout path="/" motion>
   <!-- Hero -->
-  <section class={`${wrap} pt-14 pb-16 md:pt-24 md:pb-20`}>
-    <p class="eyebrow mb-8 rise" style="--d:0.05s">{t(copy.hero.eyebrow)}</p>
+  <section class={`${wrap} pt-10 pb-16 md:pt-20 md:pb-20`}>
     <h1 class="text-[3.1rem] sm:text-[4rem] md:text-[5.2rem] xl:text-[6rem] [text-wrap:balance]">
       {
         copy.hero.h1.map((line, i) => (
@@ -175,71 +180,32 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
         ))
       }
     </h1>
-    <p
-      class="rise mt-9 max-w-2xl text-lg md:text-[1.3rem] md:leading-[1.5] text-[var(--color-cream-soft)]"
-      style="--d:0.32s"
-    >
-      <Inline text={t(copy.hero.lead)} />
-    </p>
-    <p class="rise mt-9 flex flex-wrap items-center gap-3" style="--d:0.42s">
-      <a href="/docs/" class="btn">{copy.hero.cta}</a>
-      <a href="#transcript" class="btn btn-ghost">{copy.hero.cta2}</a>
-    </p>
-    <div id="transcript" class="mt-16 max-w-3xl scroll-mt-6">
-      <Transcript lines={transcript} label={t(copy.hero.transcriptCaption)} />
+    <div class="mt-7 grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:items-start lg:gap-12">
+      <div>
+        <p class="max-w-lg text-lg md:text-[1.3rem] md:leading-[1.5] text-[var(--color-cream-soft)]">
+          <Inline text={t(copy.hero.lead)} />
+        </p>
+        <p class="mt-5 flex flex-wrap items-center gap-3">
+          <a href="/docs/" class="btn">{copy.hero.cta}</a>
+          <a href="#transcript" class="btn btn-ghost">{copy.hero.cta2}</a>
+        </p>
+      </div>
+      <div id="transcript" class="min-w-0 scroll-mt-6 border border-[var(--color-line)] bg-[var(--color-coal)] p-4 sm:p-6">
+        <h2 class="text-3xl mb-4">A dry-run flag, from plan to PR</h2>
+        <ol class="divide-y divide-[var(--color-line)]">
+          {taskSteps.map((step) => (
+            <li class="py-2.5">
+              <strong class:list={['block font-semibold', step.human && 'text-[var(--color-you)]']}>{step.title}</strong>
+              <span class="block text-[var(--color-cream-soft)] text-sm">{step.detail}</span>
+            </li>
+          ))}
+        </ol>
+        <details class="mt-2 border-t border-[var(--color-line)]">
+          <summary class="cursor-pointer py-3 text-sm underline underline-offset-4">Read the terminal transcript</summary>
+          <Transcript lines={transcript} label={t(copy.hero.transcriptCaption)} />
+        </details>
+      </div>
     </div>
-  </section>
-
-  <section
-    id="model-preview"
-    aria-labelledby="model-preview-title"
-    class="max-w-6xl mx-auto px-6 py-12"
-  >
-    <p class="eyebrow mb-4">Released v0.5.1 · AA v5.0.1 · November 16, 2026</p>
-    <h2 id="model-preview-title" class="text-3xl md:text-4xl mb-6">
-      Qwen4 Max, with explicit roles.
-    </h2>
-    <p class="max-w-2xl mb-5">
-      Qwen4 is an optional implementation profile through the existing Claude harness and an
-      explicit QwenCloud Token Plan endpoint. Its structured context check passed; planner, reviewer
-      and judge defaults stay yours. AA reports 42.9 for an unnamed default setting, with no
-      high/xhigh score. <a href="/docs/models/" class="underline">Model evidence →</a>
-    </p>
-    <p class="max-w-2xl mb-5">
-      Fable 5.2/high scores 61.8 and max 64.6. Carbon/high scores 60.0; Hydrogen/high 50.8 and xhigh
-      53.9. Each score belongs to that effort. Frontier starts at 56.6 and mid at 44.6.
-    </p>
-    <p class="max-w-2xl mb-5">
-      Opus/high plans, implements and reviews. The optional judge uses Fable 5.2/high, with max as
-      an explicit option. The agy starter uses Hydrogen/high; medium is an optional scout and xhigh
-      an optional deep profile. Carbon/high is an optional planner or judge.
-    </p>
-    <p class="max-w-2xl mb-5">
-      Carbon stays optional through Antigravity/agy, requires an enabled Ultra or Enterprise
-      account, and must appear under its exact requested ID. It was absent from the checked local
-      inventory; Hydrogen was present. No model or API substitution.
-    </p>
-    <p>
-      <a href="/docs/models/" class="underline">Benchmarks and provider limits →</a>
-      · <a href="/docs/configuration/" class="underline">Role configuration →</a>
-    </p>
-    <article
-      id="gemini-4-neon"
-      aria-labelledby="neon-title"
-      class="mt-8 max-w-2xl scroll-mt-20 border-t border-[var(--color-line)] pt-6"
-    >
-      <p class="eyebrow mb-3">Development preview · current npm release v{kit.version}</p>
-      <h3 id="neon-title" class="text-2xl mb-3">Gemini 4 Neon</h3>
-      <p class="mb-3">
-        The <code>main</code> branch adds <code>neon-builder</code> at high and <code>neon-planner</code>
-        and <code>neon-judge</code> at xhigh. Select a profile for the role you want to use and check
-        the exact effort ID in <code>agy models</code>.
-      </p>
-      <p>
-        Artificial Analysis v5.0.1 measured 59.6 at high and 61.4 at xhigh.
-        <a href="https://github.com/reasance/bottega-kit/blob/main/docs/configuration.md#optional-google-frontier-profiles" class="underline">Neon role configuration on GitHub →</a>
-      </p>
-    </article>
   </section>
 
   <!-- 01 · the commands -->
@@ -509,6 +475,58 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
         </div>
       </div>
     </div>
+  </section>
+
+  <section
+    id="model-preview"
+    aria-labelledby="model-preview-title"
+    class="max-w-6xl mx-auto px-6 py-12"
+  >
+    <p class="eyebrow mb-4">Released v0.5.1 · AA v5.0.1 · November 16, 2026</p>
+    <h2 id="model-preview-title" class="text-3xl md:text-4xl mb-6">
+      Qwen4 Max, with explicit roles.
+    </h2>
+    <p class="max-w-2xl mb-5">
+      Qwen4 is an optional implementation profile through the existing Claude harness and an
+      explicit QwenCloud Token Plan endpoint. Its structured context check passed; planner, reviewer
+      and judge defaults stay yours. AA reports 42.9 for an unnamed default setting, with no
+      high/xhigh score. <a href="/docs/models/" class="underline">Model evidence →</a>
+    </p>
+    <p class="max-w-2xl mb-5">
+      Fable 5.2/high scores 61.8 and max 64.6. Carbon/high scores 60.0; Hydrogen/high 50.8 and xhigh
+      53.9. Each score belongs to that effort. Frontier starts at 56.6 and mid at 44.6.
+    </p>
+    <p class="max-w-2xl mb-5">
+      Opus/high plans, implements and reviews. The optional judge uses Fable 5.2/high, with max as
+      an explicit option. The agy starter uses Hydrogen/high; medium is an optional scout and xhigh
+      an optional deep profile. Carbon/high is an optional planner or judge.
+    </p>
+    <p class="max-w-2xl mb-5">
+      Carbon stays optional through Antigravity/agy, requires an enabled Ultra or Enterprise
+      account, and must appear under its exact requested ID. It was absent from the checked local
+      inventory; Hydrogen was present. No model or API substitution.
+    </p>
+    <p>
+      <a href="/docs/models/" class="underline">Benchmarks and provider limits →</a>
+      · <a href="/docs/configuration/" class="underline">Role configuration →</a>
+    </p>
+    <article
+      id="gemini-4-neon"
+      aria-labelledby="neon-title"
+      class="mt-8 max-w-2xl scroll-mt-20 border-t border-[var(--color-line)] pt-6"
+    >
+      <p class="eyebrow mb-3">Development preview · current npm release v{kit.version}</p>
+      <h3 id="neon-title" class="text-2xl mb-3">Gemini 4 Neon</h3>
+      <p class="mb-3">
+        The <code>main</code> branch adds <code>neon-builder</code> at high and <code>neon-planner</code>
+        and <code>neon-judge</code> at xhigh. Select a profile for the role you want to use and check
+        the exact effort ID in <code>agy models</code>.
+      </p>
+      <p>
+        Artificial Analysis v5.0.1 measured 59.6 at high and 61.4 at xhigh.
+        <a href="https://github.com/reasance/bottega-kit/blob/main/docs/configuration.md#optional-google-frontier-profiles" class="underline">Neon role configuration on GitHub →</a>
+      </p>
+    </article>
   </section>
 
   <!-- install -->

@@ -223,6 +223,23 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
       <a href="/docs/models/" class="underline">Benchmarks and provider limits →</a>
       · <a href="/docs/configuration/" class="underline">Role configuration →</a>
     </p>
+    <article
+      id="gemini-4-neon"
+      aria-labelledby="neon-title"
+      class="mt-8 max-w-2xl scroll-mt-20 border-t border-[var(--color-line)] pt-6"
+    >
+      <p class="eyebrow mb-3">Development preview · current npm release v{kit.version}</p>
+      <h3 id="neon-title" class="text-2xl mb-3">Gemini 4 Neon</h3>
+      <p class="mb-3">
+        The <code>main</code> branch adds <code>neon-builder</code> at high and <code>neon-planner</code>
+        and <code>neon-judge</code> at xhigh. Select a profile for the role you want to use and check
+        the exact effort ID in <code>agy models</code>.
+      </p>
+      <p>
+        Artificial Analysis v5.0.1 measured 59.6 at high and 61.4 at xhigh.
+        <a href="https://github.com/reasance/bottega-kit/blob/main/docs/configuration.md#optional-google-frontier-profiles" class="underline">Neon role configuration on GitHub →</a>
+      </p>
+    </article>
   </section>
 
   <!-- 01 · the commands -->

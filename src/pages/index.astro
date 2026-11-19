@@ -170,7 +170,7 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
 
 <BaseLayout path="/" motion>
   <!-- Hero -->
-  <section class={`${wrap} pt-10 pb-16 md:pt-20 md:pb-20`}>
+  <section class={`${wrap} pt-10 pb-16 md:pt-16 md:pb-20`}>
     <h1 class="text-[3.1rem] sm:text-[4rem] md:text-[5.2rem] xl:text-[6rem] [text-wrap:balance]">
       {
         copy.hero.h1.map((line, i) => (
@@ -190,18 +190,21 @@ const stagger = (i: number) => `--d:${(i * 0.06).toFixed(2)}s`;
           <a href="#transcript" class="btn btn-ghost">{copy.hero.cta2}</a>
         </p>
       </div>
-      <div id="transcript" class="min-w-0 scroll-mt-6 border border-[var(--color-line)] bg-[var(--color-coal)] p-4 sm:p-6">
-        <h2 class="text-3xl mb-4">A dry-run flag, from plan to PR</h2>
-        <ol class="divide-y divide-[var(--color-line)]">
-          {taskSteps.map((step) => (
-            <li class="py-2.5">
-              <strong class:list={['block font-semibold', step.human && 'text-[var(--color-you)]']}>{step.title}</strong>
-              <span class="block text-[var(--color-cream-soft)] text-sm">{step.detail}</span>
+      <div id="transcript" class="task-ledger scroll-mt-6">
+        <h2>A dry-run flag, from plan to PR</h2>
+        <ol class="task-steps" role="list">
+          {taskSteps.map((step, i) => (
+            <li class:list={['task-step', step.human && 'task-step-human']}>
+              <span class="task-step-number" aria-hidden="true">{i + 1}</span>
+              <div>
+                <strong>{step.title}</strong>
+                <p>{step.detail}</p>
+              </div>
             </li>
           ))}
         </ol>
-        <details class="mt-2 border-t border-[var(--color-line)]">
-          <summary class="cursor-pointer py-3 text-sm underline underline-offset-4">Read the terminal transcript</summary>
+        <details class="task-transcript">
+          <summary>Read the terminal transcript</summary>
           <Transcript lines={transcript} label={t(copy.hero.transcriptCaption)} />
         </details>
       </div>
@@ -567,3 +570,67 @@ bottega doctor`}
 <script>
   import '../scripts/motion';
 </script>
+
+<style>
+  .task-ledger {
+    --ledger-surface: #242b46;
+    --ledger-text: #faf4eb;
+    --ledger-soft: #d4d9ec;
+    --ledger-wire: #8693bd;
+    --ledger-human: #a9b8ff;
+    min-width: 0;
+    background: var(--ledger-surface);
+    color: var(--ledger-text);
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+  .task-ledger h2 {
+    font-size: clamp(2rem, 3.4vw, 3.4rem);
+    line-height: 1;
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+  }
+  .task-steps {
+    position: relative;
+    display: grid;
+    gap: 0.95rem;
+  }
+  .task-steps::before {
+    content: "";
+    position: absolute;
+    inset-block: 0.95rem 2rem;
+    inset-inline-start: 0.9rem;
+    width: 1px;
+    background: var(--ledger-wire);
+  }
+  .task-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.875rem minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: start;
+  }
+  .task-step-number {
+    width: 1.875rem;
+    height: 1.875rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--ledger-wire);
+    border-radius: 50%;
+    background: var(--ledger-surface);
+    color: var(--ledger-soft);
+    font: 0.75rem/1 var(--font-mono);
+  }
+  .task-step strong { display: block; line-height: 1.25; }
+  .task-step p { margin-top: 0.2rem; color: var(--ledger-soft); font-size: 0.9rem; }
+  .task-step-human .task-step-number { background: var(--ledger-human); color: var(--ledger-surface); border-color: var(--ledger-human); }
+  .task-transcript { margin-top: 1.15rem; border-top: 1px solid var(--ledger-wire); }
+  .task-transcript summary {
+    padding-block: 0.75rem 0.1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    min-height: 2.75rem;
+  }
+  .task-transcript summary:hover { color: var(--ledger-human); }
+  .task-transcript summary:focus-visible { outline-color: var(--ledger-human); }
+</style>
